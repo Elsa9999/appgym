@@ -35,7 +35,10 @@ db.enablePersistence()
 const workoutTemplates = {
   'nguc_tay_sau': ['Ngực trên với máy', 'Ngực giữa với máy', 'Ép ngực với cáp', 'Dip', 'Tay sau với cáp (dây dài)'],
   'vai': ['Vai trước với máy', 'Bay vai với cáp để sau', 'Bay vai với cáp để trước', 'Face Pull', 'Cầu vai'],
-  'lung_tay_truoc': ['Pull up', 'Low row machine', 'Lat pulldown hẹp', 'Chest support row', 'Seated row wide', 'Back extension', 'Preacher curl']
+  'lung_tay_truoc': ['Pull up', 'Low row machine', 'Lat pulldown hẹp', 'Chest support row', 'Seated row wide', 'Back extension', 'Preacher curl'],
+  'chan': ['Squat (Gánh tạ)', 'Leg Press (Đạp đùi)', 'Leg Extension (Đá đùi trước)', 'Lying Leg Curl (Móc đùi sau)', 'Calf Raise (Nhón bắp chuối)', 'Lunge'],
+  'tay': ['Barbell Bicep Curl (Cuốn tạ đòn)', 'Dumbbell Bicep Curl (Cuốn tạ đơn)', 'Hammer Curl', 'Tricep Pushdown (Kéo cáp tay sau)', 'Skull Crusher', 'Overhead Tricep Extension'],
+  'bung': ['Gập bụng (Crunches)', 'Plank (Giữ ván)', 'Leg Raise (Nằm nâng chân)', 'Russian Twist']
 };
 
 // Global State
