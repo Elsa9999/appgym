@@ -284,6 +284,7 @@ function setupFirestoreListener(userId) {
         updateAnalysis();
     }, error => {
         console.error("Error fetching workouts: ", error);
+        renderHistory(); // Render empty state on error
     });
 }
 
