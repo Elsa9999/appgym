@@ -252,34 +252,31 @@ auth.onAuthStateChanged(user => {
 
 // --- DATA MIGRATION ---
 async function checkAndMigrateData(userId) {
-    const localData = localStorage.getItem('workouts');
-    if (localData && JSON.parse(localData).length > 0) {
-        if (confirm("Bạn có muốn chuyển dữ liệu tập luyện cũ lên tài khoản của bạn không?")) {
+    try {
+        const localData = localStorage.getItem('workouts');
+        if (!localData || JSON.parse(localData).length === 0) return;
+        
+        if (confirm("Phát hiện dữ liệu cũ trên máy này. Bạn có muốn chuyển lên tài khoản của mình không?")) {
             const localWorkouts = JSON.parse(localData);
-            const userDocRef = db.collection('users').doc(userId);
             const batch = db.batch();
-
             localWorkouts.forEach(workout => {
-                const workoutRef = userDocRef.collection('workouts').doc(); // Auto-generate ID
-                batch.set(workoutRef, workout);
+                const docRef = db.collection('users').doc(userId).collection('workouts').doc();
+                batch.set(docRef, workout);
             });
-
-            try {
-                await batch.commit();
-                alert("Di chuyển dữ liệu thành công!");
-                localStorage.removeItem('workouts'); // Clear local data after migration
-            } catch (error) {
-                console.error("Migration failed: ", error);
-                alert("Di chuyển dữ liệu thất bại.");
-            }
+            await batch.commit();
+            alert("Di chuyển dữ liệu thành công!");
+            localStorage.removeItem('workouts');
         }
+    } catch (error) {
+        console.error("Migration failed: ", error);
+        alert("Lỗi di chuyển dữ liệu.");
     }
 }
 
 // --- FIRESTORE ---
 function setupFirestoreListener(userId) {
+    if (unsubscribe) unsubscribe();
     const workoutsCollection = db.collection('users').doc(userId).collection('workouts').orderBy('date', 'desc');
-
     unsubscribe = workoutsCollection.onSnapshot(snapshot => {
         workouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderHistory();
@@ -305,7 +302,7 @@ function closeAuthModalFunc() {
 
 function updateAuthModalUI() {
     if (isSignUp) {
-        authModalTitle.textContent = 'Đăng ký tài khoản';
+        authModalTitle.textContent = 'Đăng ký';
         authSubmitBtn.textContent = 'Đăng ký';
         authToggleLink.textContent = 'Đã có tài khoản? Đăng nhập';
     } else {
