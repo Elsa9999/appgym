@@ -5,8 +5,10 @@ const urlsToCache = [
   "/style.css",
   "/app.js",
   "/manifest.json",
-  "/icon-192.png",
-  "/icon-512.png"
+  "https://cdn.jsdelivr.net/npm/chart.js",
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js",
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js",
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"
 ];
 
 self.addEventListener("install", event => {

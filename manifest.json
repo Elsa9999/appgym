@@ -3,19 +3,8 @@
   "short_name": "GymTracker",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#f4f7f9",
-  "theme_color": "#3498db",
-  "description": "Theo dõi tập gym, phân tích tiến bộ, hoạt động offline.",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "description": "A simple and effective gym workout tracker.",
+  "icons": []
 } 
