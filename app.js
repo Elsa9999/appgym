@@ -29,6 +29,15 @@ db.enablePersistence()
     }
   });
 
+// =================================================================================
+// Dữ liệu gợi ý bài tập (Workout Templates)
+// =================================================================================
+const workoutTemplates = {
+  'nguc_tay_sau': ['Ngực trên với máy', 'Ngực giữa với máy', 'Ép ngực với cáp', 'Dip', 'Tay sau với cáp (dây dài)'],
+  'vai': ['Vai trước với máy', 'Bay vai với cáp để sau', 'Bay vai với cáp để trước', 'Face Pull', 'Cầu vai'],
+  'lung_tay_truoc': ['Pull up', 'Low row machine', 'Lat pulldown hẹp', 'Chest support row', 'Seated row wide', 'Back extension', 'Preacher curl']
+};
+
 // Global State
 let currentUser = null;
 let workouts = [];
@@ -126,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const authPasswordInput = document.getElementById('auth-password');
     const authErrorEl = document.getElementById('auth-error');
     const authToggleLink = document.getElementById('auth-toggle-link');
+    const templateSelect = document.getElementById('template-select');
+    const exerciseSuggestionsEl = document.getElementById('exercise-suggestions');
 
     // Attach Auth Event Listeners
     loginGoogleBtn.addEventListener('click', () => {
@@ -135,6 +146,24 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại. Lỗi: ${error.code}`);
         });
     });
+
+    // Listener cho việc chọn buổi tập mẫu
+    templateSelect.addEventListener('change', (e) => {
+        const selectedTemplateKey = e.target.value;
+        
+        // Xóa các gợi ý cũ
+        exerciseSuggestionsEl.innerHTML = '';
+
+        if (selectedTemplateKey && workoutTemplates[selectedTemplateKey]) {
+            const exercises = workoutTemplates[selectedTemplateKey];
+            exercises.forEach(exercise => {
+                const option = document.createElement('option');
+                option.value = exercise;
+                exerciseSuggestionsEl.appendChild(option);
+            });
+        }
+    });
+
     loginEmailBtn.addEventListener('click', openAuthModal);
     logoutBtn.addEventListener('click', () => auth.signOut());
     closeAuthModalBtn.addEventListener('click', closeAuthModalFunc);
