@@ -2,12 +2,13 @@
 // Firebase and Global Configuration
 // =================================================================================
 const firebaseConfig = {
-    apiKey: "AIzaSyC5sb0CiUsN-hUW3PFD7xUmFKKaUOS8gu8",
+    apiKey: "AIzaSyC5sb0CiUsN-huW3PFD7xUmFKKaUOS8gu8",
     authDomain: "appgym-tracker.firebaseapp.com",
     projectId: "appgym-tracker",
     storageBucket: "appgym-tracker.firebasestorage.app",
     messagingSenderId: "454503576697",
     appId: "1:454503576697:web:d80e3be10908488801d0a8",
+    measurementId: "G-Q5M390GZCC"
 };
 
 firebase.initializeApp(firebaseConfig);
