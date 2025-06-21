@@ -16,6 +16,19 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+// Kích hoạt chế độ offline của Firestore
+db.enablePersistence()
+  .catch((err) => {
+    if (err.code == 'failed-precondition') {
+      // Lỗi này thường xảy ra khi có nhiều tab đang mở.
+      // Persistence chỉ có thể được kích hoạt ở một tab.
+      console.warn('Firebase persistence failed: multiple tabs open.');
+    } else if (err.code == 'unimplemented') {
+      // Trình duyệt không hỗ trợ tính năng này.
+      console.warn('Firebase persistence is not available in this browser.');
+    }
+  });
+
 // Global State
 let currentUser = null;
 let workouts = [];
@@ -170,4 +183,17 @@ document.addEventListener('DOMContentLoaded', () => {
             renderHistory();
         }
     });
+
+    // Đăng ký Service Worker cho PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker đã được đăng ký thành công:', registration);
+                })
+                .catch(err => {
+                    console.error('Đăng ký Service Worker thất bại:', err);
+                });
+        });
+    }
 });

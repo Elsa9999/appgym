@@ -1,0 +1,29 @@
+{
+  "name": "AppGym - Theo Dõi Tập Luyện",
+  "short_name": "AppGym",
+  "description": "Ứng dụng theo dõi quá trình tập gym cá nhân của bạn.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1f1f1f",
+  "theme_color": "#4a90e2",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable_icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+} 
