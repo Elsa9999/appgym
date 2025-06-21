@@ -1,14 +1,14 @@
-const CACHE_NAME = "gym-tracker-v1";
+const CACHE_NAME = 'gym-tracker-cache-v2';
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/style.css",
-  "/app.js",
-  "/manifest.json",
-  "https://cdn.jsdelivr.net/npm/chart.js",
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js",
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js",
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"
+  '.',
+  'index.html',
+  'style.css',
+  'app.js',
+  'manifest.json',
+  'https://cdn.jsdelivr.net/npm/chart.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js'
 ];
 
 self.addEventListener("install", event => {
