@@ -2,7 +2,7 @@
 // Firebase and Global Configuration
 // =================================================================================
 const firebaseConfig = {
-    apiKey: "AIzaSyC5sb0CiUsN-huW3PFD7xUmFKKaUOS8gu8",
+    apiKey: "AIzaSyC5sbOCiUsN-huW3PFD7xUmFkKaUOS8gu8",
     authDomain: "appgym-tracker.firebaseapp.com",
     projectId: "appgym-tracker",
     storageBucket: "appgym-tracker.firebasestorage.app",
