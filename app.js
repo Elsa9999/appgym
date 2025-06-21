@@ -46,32 +46,74 @@ let currentUser = null;
 let workouts = [];
 let unsubscribe;
 let isSignUp = false;
+let currentEditId = null; // To track which workout is being edited
 
 // =================================================================================
 // Function Definitions
 // =================================================================================
 
+/**
+ * Adds a new set input group to the specified container.
+ * @param {string} containerId The ID of the container element for sets.
+ */
+function addSet(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const setNumber = container.children.length + 1;
+    const setEl = document.createElement('div');
+    setEl.classList.add('set-item');
+    setEl.innerHTML = `
+        <label>Set ${setNumber}:</label>
+        <input type="number" class="set-weight" placeholder="Tạ (kg)" required>
+        <input type="number" class="set-reps" placeholder="Reps" required>
+        <button type="button" class="remove-set-btn">Xóa</button>
+    `;
+
+    // Add event listener to the new remove button
+    setEl.querySelector('.remove-set-btn').addEventListener('click', () => {
+        setEl.remove();
+        // After removing, update the labels of the remaining sets
+        const sets = container.querySelectorAll('.set-item');
+        sets.forEach((set, index) => {
+            set.querySelector('label').textContent = `Set ${index + 1}:`;
+        });
+    });
+
+    container.appendChild(setEl);
+}
+
 function renderHistory() {
-    const workoutHistoryEl = document.getElementById('workout-history');
-    if (!workoutHistoryEl) return;
-    
+    const historyBody = document.getElementById('history-body');
+    if (!historyBody) return;
+
     if (workouts.length === 0) {
-        workoutHistoryEl.innerHTML = "<p>Chưa có lịch sử tập luyện. Hãy thêm buổi tập đầu tiên!</p>";
+        historyBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Chưa có lịch sử tập luyện.</td></tr>';
         return;
     }
 
-    workoutHistoryEl.innerHTML = '<ul>' + workouts.map(w => `
-        <li data-id="${w.id}">
-            <div>
-                <strong>${w.exercise || 'Không tên'}</strong> - ${w.date ? new Date(w.date).toLocaleDateString() : 'Không ngày'}
-                <small>(${(w.sets || []).length} hiệp)</small>
-            </div>
-            <div class="workout-actions">
-                <button class="edit-btn">Sửa</button>
-                <button class="danger delete-btn">Xóa</button>
-            </div>
-        </li>
-    `).join('') + '</ul>';
+    historyBody.innerHTML = workouts.map(w => {
+        // Default to an empty array if sets are missing
+        const sets = w.sets || [];
+        const setsDetails = sets.map(s => `<li>${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
+        const totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+
+        return `
+            <tr data-id="${w.id}">
+                <td>${w.date ? new Date(w.date).toLocaleDateString('vi-VN') : 'N/A'}</td>
+                <td>${w.muscleGroup || 'N/A'}</td>
+                <td>${w.exercise || 'Không tên'}</td>
+                <td>${w.equipment || ''}</td>
+                <td><ul class="sets-list">${setsDetails}</ul></td>
+                <td>${totalVolume.toLocaleString('vi-VN')} kg</td>
+                <td>${w.notes || ''}</td>
+                <td class="workout-actions">
+                    <button class="edit-btn">Sửa</button>
+                    <button class="delete-btn">Xóa</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function openAuthModal() {
@@ -140,6 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const authToggleLink = document.getElementById('auth-toggle-link');
     const templateSelect = document.getElementById('template-select');
     const exerciseSuggestionsEl = document.getElementById('exercise-suggestions');
+    const addSetBtn = document.getElementById('add-set');
+    const workoutForm = document.getElementById('workout-form');
+    const historyBody = document.getElementById('history-body');
 
     // Attach Auth Event Listeners
     loginGoogleBtn.addEventListener('click', () => {
@@ -228,4 +273,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     }
+
+    // Listener for adding a new set to the main form
+    addSetBtn.addEventListener('click', () => addSet('sets-container'));
+
+    // Listener for saving a new workout
+    workoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser) {
+            alert("Vui lòng đăng nhập để lưu bài tập!");
+            return;
+        }
+
+        const setsContainer = document.getElementById('sets-container');
+        const setsData = Array.from(setsContainer.querySelectorAll('.set-item')).map(setEl => {
+            const weight = setEl.querySelector('.set-weight').value;
+            const reps = setEl.querySelector('.set-reps').value;
+            return { weight: parseFloat(weight) || 0, reps: parseInt(reps) || 0 };
+        });
+
+        if (setsData.length === 0) {
+            alert("Vui lòng thêm ít nhất một set!");
+            return;
+        }
+
+        const workoutData = {
+            // Use server timestamp for date if not provided, ensuring consistency
+            date: document.getElementById('workout-date').value || new Date().toISOString().split('T')[0],
+            muscleGroup: document.getElementById('muscle-group').value,
+            exercise: document.getElementById('exercise-name').value,
+            equipment: document.getElementById('equipment').value,
+            notes: document.getElementById('notes').value,
+            sets: setsData,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            await db.collection('users').doc(currentUser.uid).collection('workouts').add(workoutData);
+            alert("Đã lưu bài tập thành công!");
+            workoutForm.reset();
+            setsContainer.innerHTML = ''; // Clear sets from the UI
+        } catch (error) {
+            console.error("Lỗi khi lưu bài tập: ", error);
+            alert("Đã có lỗi xảy ra khi lưu bài tập. Vui lòng thử lại.");
+        }
+    });
+
+    // Event delegation for edit and delete buttons in the history table
+    historyBody.addEventListener('click', async (e) => {
+        const target = e.target;
+        // Find the closest TR element to get the workout ID
+        const workoutRow = target.closest('tr');
+        if (!workoutRow) return;
+
+        const workoutId = workoutRow.dataset.id;
+        if (!workoutId || !currentUser) return;
+
+        // Handle Delete
+        if (target.classList.contains('delete-btn')) {
+            if (confirm("Bạn có chắc chắn muốn xóa bài tập này?")) {
+                try {
+                    await db.collection('users').doc(currentUser.uid).collection('workouts').doc(workoutId).delete();
+                    // No need to alert, the UI will update automatically via onSnapshot
+                } catch (error) {
+                    console.error("Lỗi khi xóa bài tập: ", error);
+                    alert("Đã có lỗi xảy ra khi xóa.");
+                }
+            }
+        }
+
+        // Handle Edit
+        if (target.classList.contains('edit-btn')) {
+            alert(`Chức năng sửa cho ID: ${workoutId} sẽ được thêm vào sớm!`);
+            // In the future, this will call a function like:
+            // openEditModal(workoutId);
+        }
+    });
 });
