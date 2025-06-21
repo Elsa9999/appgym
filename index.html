@@ -10,195 +10,247 @@
     <meta name="theme-color" content="#3498db">
 </head>
 <body>
-    <div class="container">
-        <h1>📝 Trình theo dõi tập Gym</h1>
-        
-        <form id="workout-form">
-            <div class="form-group">
-                <label for="workout-date">Ngày tập</label>
-                <input type="date" id="workout-date" required>
+    <header>
+        <h1>🏋️ Gym Workout Tracker</h1>
+        <div id="user-info" class="hidden">
+            <span id="user-display-name"></span>
+            <button id="logout-btn">Đăng xuất</button>
+        </div>
+        <div class="theme-switcher-container">
+            <label for="theme-toggle" class="theme-switcher">
+                <input type="checkbox" id="theme-toggle" />
+                <span class="slider"></span>
+            </label>
+        </div>
+    </header>
+    <main>
+        <div id="auth-container" class="container hidden">
+            <h2>Chào mừng bạn!</h2>
+            <p>Đăng nhập để đồng bộ dữ liệu tập luyện của bạn trên mọi thiết bị.</p>
+            <div class="auth-buttons">
+                <button id="login-google-btn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+                    Đăng nhập với Google
+                </button>
+                <button id="login-email-btn">Đăng nhập với Email</button>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label for="muscle-group">Nhóm cơ</label>
-                <select id="muscle-group" required>
-                    <option value="Ngực">Ngực (Chest)</option>
-                    <option value="Lưng">Lưng (Back)</option>
-                    <option value="Chân">Chân (Legs)</option>
-                    <option value="Tay">Tay (Arms)</option>
-                    <option value="Bụng">Bụng (Abs)</option>
-                    <option value="Vai">Vai (Shoulders)</option>
-                </select>
-            </div>
+        <div id="app-content" class="hidden">
+            <div class="container">
+                <h1>📝 Trình theo dõi tập Gym</h1>
+                
+                <form id="workout-form">
+                    <div class="form-group">
+                        <label for="workout-date">Ngày tập</label>
+                        <input type="date" id="workout-date" required>
+                    </div>
 
-            <div class="form-group">
-                <label for="exercise-name">Tên bài tập</label>
-                <input type="text" id="exercise-name" list="exercise-suggestions" placeholder="VD: Bench Press" required>
-                <datalist id="exercise-suggestions">
-                </datalist>
-            </div>
+                    <div class="form-group">
+                        <label for="muscle-group">Nhóm cơ</label>
+                        <select id="muscle-group" required>
+                            <option value="Ngực">Ngực (Chest)</option>
+                            <option value="Lưng">Lưng (Back)</option>
+                            <option value="Chân">Chân (Legs)</option>
+                            <option value="Tay">Tay (Arms)</option>
+                            <option value="Bụng">Bụng (Abs)</option>
+                            <option value="Vai">Vai (Shoulders)</option>
+                        </select>
+                    </div>
 
-            <div class="form-group">
-                <label for="equipment">Máy tập / Dụng cụ</label>
-                <input type="text" id="equipment" placeholder="VD: Tạ đòn">
-            </div>
+                    <div class="form-group">
+                        <label for="exercise-name">Tên bài tập</label>
+                        <input type="text" id="exercise-name" list="exercise-suggestions" placeholder="VD: Bench Press" required>
+                        <datalist id="exercise-suggestions">
+                        </datalist>
+                    </div>
 
-            <div class="sets-section">
-                <div class="sets-header">
-                    <h3>Chi tiết các Set</h3>
-                    <button type="button" id="add-set" class="btn btn-secondary">+ Thêm Set</button>
+                    <div class="form-group">
+                        <label for="equipment">Máy tập / Dụng cụ</label>
+                        <input type="text" id="equipment" placeholder="VD: Tạ đòn">
+                    </div>
+
+                    <div class="sets-section">
+                        <div class="sets-header">
+                            <h3>Chi tiết các Set</h3>
+                            <button type="button" id="add-set" class="btn btn-secondary">+ Thêm Set</button>
+                        </div>
+                        <div id="sets-container">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Ghi chú thêm</label>
+                        <textarea id="notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Lưu bài tập</button>
+                </form>
+
+                <div class="chart-section">
+                    <h2>📈 Biểu đồ tăng tiến</h2>
+                    <div class="chart-controls">
+                        <select id="chart-exercise">
+                            <option value="">Chọn bài tập</option>
+                        </select>
+                        <select id="chart-metric">
+                            <option value="weight">Mức tạ (kg)</option>
+                            <option value="reps">Số rep</option>
+                            <option value="volume">Khối lượng (kg × reps)</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="progress-chart"></canvas>
+                    </div>
                 </div>
-                <div id="sets-container">
+
+                <div class="chart-section">
+                    <h2>💪 Ước tính 1RM (One-Rep Max)</h2>
+                    <div class="chart-controls">
+                        <select id="rm-exercise">
+                            <option value="">Chọn bài tập</option>
+                        </select>
+                    </div>
+                    <div id="rm-overview">
+                        <p style="text-align: center; color: #666; font-style: italic;">Chọn bài tập để xem ước tính 1RM</p>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <h2>📊 Phân tích nâng cao & Gợi ý</h2>
+                    <div class="chart-controls">
+                        <select id="analysis-exercise">
+                            <option value="">Chọn bài tập</option>
+                        </select>
+                        <select id="analysis-type">
+                            <option value="trend">Đường cong xu hướng</option>
+                            <option value="recommendation">Gợi ý mức tạ</option>
+                        </select>
+                    </div>
+                    <div id="analysis-content">
+                        <p style="text-align: center; color: #666; font-style: italic;">Chọn bài tập và loại phân tích để xem chi tiết</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="analysis-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <div class="history-controls">
+                        <h2>Lịch sử tập luyện</h2>
+                        <div class="data-controls">
+                            <button id="export-data" class="btn btn-success">📤 Xuất dữ liệu</button>
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                            <button id="import-data" class="btn btn-secondary">📥 Nhập dữ liệu</button>
+                            <button id="delete-all" class="btn btn-danger">🗑️ Xóa tất cả</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Nhóm cơ</th>
+                                    <th>Bài tập</th>
+                                    <th>Dụng cụ</th>
+                                    <th>Chi tiết Sets</th>
+                                    <th>Tổng khối lượng</th>
+                                    <th>Ghi chú</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-body">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="notes">Ghi chú thêm</label>
-                <textarea id="notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
-            </div>
+            <!-- Edit Modal -->
+            <div id="edit-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>✏️ Chỉnh sửa bài tập</h2>
+                        <span class="close">&times;</span>
+                    </div>
+                    <form id="edit-form">
+                        <input type="hidden" id="edit-id">
+                        <div class="form-group">
+                            <label for="edit-workout-date">Ngày tập</label>
+                            <input type="date" id="edit-workout-date" required>
+                        </div>
 
-            <button type="submit" class="btn btn-primary">Lưu bài tập</button>
-        </form>
+                        <div class="form-group">
+                            <label for="edit-muscle-group">Nhóm cơ</label>
+                            <select id="edit-muscle-group" required>
+                                <option value="Ngực">Ngực (Chest)</option>
+                                <option value="Lưng">Lưng (Back)</option>
+                                <option value="Chân">Chân (Legs)</option>
+                                <option value="Tay">Tay (Arms)</option>
+                                <option value="Bụng">Bụng (Abs)</option>
+                                <option value="Vai">Vai (Shoulders)</option>
+                            </select>
+                        </div>
 
-        <div class="chart-section">
-            <h2>📈 Biểu đồ tăng tiến</h2>
-            <div class="chart-controls">
-                <select id="chart-exercise">
-                    <option value="">Chọn bài tập</option>
-                </select>
-                <select id="chart-metric">
-                    <option value="weight">Mức tạ (kg)</option>
-                    <option value="reps">Số rep</option>
-                    <option value="volume">Khối lượng (kg × reps)</option>
-                </select>
-            </div>
-            <div class="chart-container">
-                <canvas id="progress-chart"></canvas>
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label for="edit-exercise-name">Tên bài tập</label>
+                            <input type="text" id="edit-exercise-name" list="edit-exercise-suggestions" placeholder="VD: Bench Press" required>
+                            <datalist id="edit-exercise-suggestions">
+                            </datalist>
+                        </div>
 
-        <div class="chart-section">
-            <h2>💪 Ước tính 1RM (One-Rep Max)</h2>
-            <div class="chart-controls">
-                <select id="rm-exercise">
-                    <option value="">Chọn bài tập</option>
-                </select>
-            </div>
-            <div id="rm-overview">
-                <p style="text-align: center; color: #666; font-style: italic;">Chọn bài tập để xem ước tính 1RM</p>
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label for="edit-equipment">Máy tập / Dụng cụ</label>
+                            <input type="text" id="edit-equipment" placeholder="VD: Tạ đòn">
+                        </div>
 
-        <div class="chart-section">
-            <h2>📊 Phân tích nâng cao & Gợi ý</h2>
-            <div class="chart-controls">
-                <select id="analysis-exercise">
-                    <option value="">Chọn bài tập</option>
-                </select>
-                <select id="analysis-type">
-                    <option value="trend">Đường cong xu hướng</option>
-                    <option value="recommendation">Gợi ý mức tạ</option>
-                </select>
-            </div>
-            <div id="analysis-content">
-                <p style="text-align: center; color: #666; font-style: italic;">Chọn bài tập và loại phân tích để xem chi tiết</p>
-            </div>
-            <div class="chart-container">
-                <canvas id="analysis-chart"></canvas>
-            </div>
-        </div>
+                        <div class="sets-section">
+                            <div class="sets-header">
+                                <h3>Chi tiết các Set</h3>
+                                <button type="button" id="edit-add-set" class="btn btn-secondary">+ Thêm Set</button>
+                            </div>
+                            <div id="edit-sets-container">
+                            </div>
+                        </div>
 
-        <div class="history-section">
-            <div class="history-controls">
-                <h2>Lịch sử tập luyện</h2>
-                <div class="data-controls">
-                    <button id="export-data" class="btn btn-success">📤 Xuất dữ liệu</button>
-                    <input type="file" id="import-file" accept=".json" style="display: none;">
-                    <button id="import-data" class="btn btn-secondary">📥 Nhập dữ liệu</button>
-                    <button id="delete-all" class="btn btn-danger">🗑️ Xóa tất cả</button>
+                        <div class="form-group">
+                            <label for="edit-notes">Ghi chú thêm</label>
+                            <textarea id="edit-notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+                            <button type="button" id="cancel-edit" class="btn btn-secondary">Hủy</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="table-container">
-                <table id="history-table">
-                    <thead>
-                        <tr>
-                            <th>Ngày</th>
-                            <th>Nhóm cơ</th>
-                            <th>Bài tập</th>
-                            <th>Dụng cụ</th>
-                            <th>Chi tiết Sets</th>
-                            <th>Tổng khối lượng</th>
-                            <th>Ghi chú</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-body">
-                    </tbody>
-                </table>
-            </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="modal">
+    <!-- Auth Modal for Email/Password -->
+    <div id="auth-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>✏️ Chỉnh sửa bài tập</h2>
-                <span class="close">&times;</span>
-            </div>
-            <form id="edit-form">
-                <input type="hidden" id="edit-id">
-                <div class="form-group">
-                    <label for="edit-workout-date">Ngày tập</label>
-                    <input type="date" id="edit-workout-date" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-muscle-group">Nhóm cơ</label>
-                    <select id="edit-muscle-group" required>
-                        <option value="Ngực">Ngực (Chest)</option>
-                        <option value="Lưng">Lưng (Back)</option>
-                        <option value="Chân">Chân (Legs)</option>
-                        <option value="Tay">Tay (Arms)</option>
-                        <option value="Bụng">Bụng (Abs)</option>
-                        <option value="Vai">Vai (Shoulders)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-exercise-name">Tên bài tập</label>
-                    <input type="text" id="edit-exercise-name" list="edit-exercise-suggestions" placeholder="VD: Bench Press" required>
-                    <datalist id="edit-exercise-suggestions">
-                    </datalist>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-equipment">Máy tập / Dụng cụ</label>
-                    <input type="text" id="edit-equipment" placeholder="VD: Tạ đòn">
-                </div>
-
-                <div class="sets-section">
-                    <div class="sets-header">
-                        <h3>Chi tiết các Set</h3>
-                        <button type="button" id="edit-add-set" class="btn btn-secondary">+ Thêm Set</button>
-                    </div>
-                    <div id="edit-sets-container">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-notes">Ghi chú thêm</label>
-                    <textarea id="edit-notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-                    <button type="button" id="cancel-edit" class="btn btn-secondary">Hủy</button>
+            <span class="close" id="close-auth-modal">&times;</span>
+            <h2 id="auth-modal-title">Đăng nhập</h2>
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Email" required>
+                <input type="password" id="auth-password" placeholder="Mật khẩu (tối thiểu 6 ký tự)" required>
+                <p id="auth-error" class="error-text"></p>
+                <div id="auth-actions">
+                    <button type="submit" id="auth-submit-btn">Đăng nhập</button>
+                    <a href="#" id="auth-toggle-link">Chưa có tài khoản? Đăng ký</a>
                 </div>
             </form>
         </div>
     </div>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js"></script>
 </body>
 </html> 
