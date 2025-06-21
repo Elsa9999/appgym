@@ -97,9 +97,16 @@ button:hover {
     opacity: 0.9;
 }
 
+button.secondary {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
 button.danger {
     background: var(--danger-color);
     color: var(--danger-text-color);
+    border-radius: 50%;
 }
 
 button.success {
@@ -581,6 +588,16 @@ tbody tr:hover {
 #auth-container {
     text-align: center;
     max-width: 500px;
+    margin-top: 5vh;
+}
+
+.auth-header {
+    margin-bottom: 30px;
+}
+
+.auth-header h1 {
+    border-bottom: none;
+    font-size: 2rem;
 }
 
 .auth-buttons button {
@@ -588,15 +605,25 @@ tbody tr:hover {
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-bottom: 10px;
+    max-width: 320px;
+    margin: 10px auto;
     padding: 12px;
     font-size: 1rem;
+    border: 1px solid var(--border-color);
 }
 
-.auth-buttons img {
+.auth-buttons button img {
     width: 20px;
     height: 20px;
-    margin-right: 10px;
+    margin-right: 12px;
+}
+
+.auth-buttons button#login-google-btn {
+    background-color: #fff;
+    color: #444;
+}
+.auth-buttons button#login-google-btn:hover {
+    background-color: #f5f5f5;
 }
 
 #auth-modal #auth-error {
@@ -604,6 +631,8 @@ tbody tr:hover {
     margin-top: 10px;
     min-height: 1.2em;
     font-size: 0.9rem;
+    gap: 10px;
+    margin-top: 15px;
 }
 
 #auth-modal a {
@@ -623,6 +652,13 @@ tbody tr:hover {
 
 #auth-actions button {
     width: 100%;
+    margin: 0;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 #user-info {

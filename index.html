@@ -10,34 +10,39 @@
     <meta name="theme-color" content="#3498db">
 </head>
 <body>
-    <header>
-        <h1>🏋️ Gym Workout Tracker</h1>
-        <div id="user-info" class="hidden">
-            <span id="user-display-name"></span>
-            <button id="logout-btn">Đăng xuất</button>
-        </div>
-        <div class="theme-switcher-container">
-            <label for="theme-toggle" class="theme-switcher">
-                <input type="checkbox" id="theme-toggle" />
-                <span class="slider"></span>
-            </label>
-        </div>
-    </header>
     <main>
-        <div id="auth-container" class="container hidden">
+        <div id="auth-container" class="container">
+            <div class="auth-header">
+                <h1>🏋️ Gym Workout Tracker</h1>
+            </div>
             <h2>Chào mừng bạn!</h2>
             <p>Đăng nhập để đồng bộ dữ liệu tập luyện của bạn trên mọi thiết bị.</p>
             <div class="auth-buttons">
                 <button id="login-google-btn">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-                    Đăng nhập với Google
+                    <span>Đăng nhập với Google</span>
                 </button>
                 <button id="login-email-btn">Đăng nhập với Email</button>
             </div>
         </div>
 
         <div id="app-content" class="hidden">
-            <div class="container">
+            <header>
+                <h1>🏋️ Gym Workout Tracker</h1>
+                <div class="header-controls">
+                    <div id="user-info" class="hidden">
+                        <span id="user-display-name"></span>
+                        <button id="logout-btn" class="secondary">Đăng xuất</button>
+                    </div>
+                    <div class="theme-switcher-container">
+                        <label for="theme-toggle" class="theme-switcher">
+                            <input type="checkbox" id="theme-toggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </header>
+            <div class="container workout-form">
                 <h1>📝 Trình theo dõi tập Gym</h1>
                 
                 <form id="workout-form">
