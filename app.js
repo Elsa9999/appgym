@@ -39,7 +39,7 @@ function renderHistory() {
         <li data-id="${w.id}">
             <div>
                 <strong>${w.exercise || 'Không tên'}</strong> - ${w.date ? new Date(w.date).toLocaleDateString() : 'Không ngày'}
-                <small>(${(w.sets || []).length} sets)</small>
+                <small>(${(w.sets || []).length} hiệp)</small>
             </div>
             <div class="workout-actions">
                 <button class="edit-btn">Sửa</button>
@@ -89,7 +89,7 @@ function setupFirestoreListener(userId) {
         workouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderHistory();
     }, error => {
-        console.error("Error fetching workouts: ", error);
+        console.error("Lỗi khi tải lịch sử tập: ", error);
         renderHistory();
     });
 }
@@ -116,7 +116,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach Auth Event Listeners
     loginGoogleBtn.addEventListener('click', () => {
-        auth.signInWithPopup(googleProvider).catch(error => alert(`Lỗi: ${error.message}`));
+        auth.signInWithPopup(googleProvider).catch(error => {
+            // Provide a more user-friendly error message
+            console.error("Lỗi đăng nhập Google:", error);
+            alert(`Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại. Lỗi: ${error.code}`);
+        });
     });
     loginEmailBtn.addEventListener('click', openAuthModal);
     logoutBtn.addEventListener('click', () => auth.signOut());
@@ -142,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             closeAuthModalFunc();
         } catch (error) {
-            authErrorEl.textContent = error.message;
+            console.error("Lỗi đăng nhập/đăng ký Email:", error);
+            authErrorEl.textContent = "Đã xảy ra lỗi. Vui lòng kiểm tra lại Email/Mật khẩu.";
         }
     });
 

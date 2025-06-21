@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gym Workout Tracker</title>
+    <title>Trình Theo Dõi Tập Gym</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </head>
@@ -26,7 +26,7 @@
 
         <div id="app-content" class="hidden">
             <header>
-                <h1>🏋️ Gym Workout Tracker</h1>
+                <h1>🏋️ Theo Dõi Tập Gym</h1>
                 <div class="header-controls">
                     <div id="user-info" class="hidden">
                         <span id="user-display-name"></span>
@@ -41,65 +41,65 @@
                 </div>
             </header>
             <div class="container workout-form">
-                <h1>📝 Trình theo dõi tập Gym</h1>
-                
-                <form id="workout-form">
-                    <div class="form-group">
-                        <label for="workout-date">Ngày tập</label>
-                        <input type="date" id="workout-date" required>
-                    </div>
+        <h1>📝 Trình theo dõi tập Gym</h1>
+        
+        <form id="workout-form">
+            <div class="form-group">
+                <label for="workout-date">Ngày tập</label>
+                <input type="date" id="workout-date" required>
+            </div>
 
-                    <div class="form-group">
-                        <label for="muscle-group">Nhóm cơ</label>
-                        <select id="muscle-group" required>
-                            <option value="Ngực">Ngực (Chest)</option>
-                            <option value="Lưng">Lưng (Back)</option>
-                            <option value="Chân">Chân (Legs)</option>
-                            <option value="Tay">Tay (Arms)</option>
-                            <option value="Bụng">Bụng (Abs)</option>
-                            <option value="Vai">Vai (Shoulders)</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label for="muscle-group">Nhóm cơ</label>
+                <select id="muscle-group" required>
+                    <option value="Ngực">Ngực (Chest)</option>
+                    <option value="Lưng">Lưng (Back)</option>
+                    <option value="Chân">Chân (Legs)</option>
+                    <option value="Tay">Tay (Arms)</option>
+                    <option value="Bụng">Bụng (Abs)</option>
+                    <option value="Vai">Vai (Shoulders)</option>
+                </select>
+            </div>
 
-                    <div class="form-group">
-                        <label for="exercise-name">Tên bài tập</label>
+            <div class="form-group">
+                <label for="exercise-name">Tên bài tập</label>
                         <input type="text" id="exercise-name" list="exercise-suggestions" placeholder="VD: Bench Press" required>
                         <datalist id="exercise-suggestions">
                         </datalist>
-                    </div>
+            </div>
 
-                    <div class="form-group">
-                        <label for="equipment">Máy tập / Dụng cụ</label>
-                        <input type="text" id="equipment" placeholder="VD: Tạ đòn">
-                    </div>
+            <div class="form-group">
+                <label for="equipment">Máy tập / Dụng cụ</label>
+                <input type="text" id="equipment" placeholder="VD: Tạ đòn">
+            </div>
 
                     <div class="sets-section">
                         <div class="sets-header">
                             <h3>Chi tiết các Set</h3>
                             <button type="button" id="add-set" class="btn btn-secondary">+ Thêm Set</button>
-                        </div>
+            </div>
                         <div id="sets-container">
-                        </div>
-                    </div>
+            </div>
+            </div>
 
-                    <div class="form-group">
-                        <label for="notes">Ghi chú thêm</label>
-                        <textarea id="notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
-                    </div>
+            <div class="form-group">
+                <label for="notes">Ghi chú thêm</label>
+                <textarea id="notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
+            </div>
 
-                    <button type="submit" class="btn btn-primary">Lưu bài tập</button>
-                </form>
+            <button type="submit" class="btn btn-primary">Lưu bài tập</button>
+        </form>
 
                 <div class="chart-section">
-                    <h2>📈 Biểu đồ tăng tiến</h2>
+                    <h2>📈 Biểu đồ tiến độ</h2>
                     <div class="chart-controls">
                         <select id="chart-exercise">
                             <option value="">Chọn bài tập</option>
                         </select>
                         <select id="chart-metric">
                             <option value="weight">Mức tạ (kg)</option>
-                            <option value="reps">Số rep</option>
-                            <option value="volume">Khối lượng (kg × reps)</option>
+                            <option value="reps">Số lần lặp (reps)</option>
+                            <option value="volume">Tổng khối lượng (kg × reps)</option>
                         </select>
                     </div>
                     <div class="chart-container">
@@ -115,19 +115,19 @@
                         </select>
                     </div>
                     <div id="rm-overview">
-                        <p style="text-align: center; color: #666; font-style: italic;">Chọn bài tập để xem ước tính 1RM</p>
+                        <p style="text-align: center; color: #666; font-style: italic;">Chọn một bài tập để xem ước tính 1RM</p>
                     </div>
                 </div>
 
                 <div class="chart-section">
-                    <h2>📊 Phân tích nâng cao & Gợi ý</h2>
+                    <h2>📊 Phân tích & Gợi ý</h2>
                     <div class="chart-controls">
                         <select id="analysis-exercise">
                             <option value="">Chọn bài tập</option>
                         </select>
                         <select id="analysis-type">
-                            <option value="trend">Đường cong xu hướng</option>
-                            <option value="recommendation">Gợi ý mức tạ</option>
+                            <option value="trend">Phân tích xu hướng</option>
+                            <option value="recommendation">Gợi ý mức tạ/reps</option>
                         </select>
                     </div>
                     <div id="analysis-content">
@@ -138,36 +138,36 @@
                     </div>
                 </div>
 
-                <div class="history-section">
-                    <div class="history-controls">
-                        <h2>Lịch sử tập luyện</h2>
+        <div class="history-section">
+            <div class="history-controls">
+                 <h2>Lịch sử tập luyện</h2>
                         <div class="data-controls">
                             <button id="export-data" class="btn btn-success">📤 Xuất dữ liệu</button>
                             <input type="file" id="import-file" accept=".json" style="display: none;">
                             <button id="import-data" class="btn btn-secondary">📥 Nhập dữ liệu</button>
                             <button id="delete-all" class="btn btn-danger">🗑️ Xóa tất cả</button>
                         </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Ngày</th>
-                                    <th>Nhóm cơ</th>
-                                    <th>Bài tập</th>
-                                    <th>Dụng cụ</th>
-                                    <th>Chi tiết Sets</th>
-                                    <th>Tổng khối lượng</th>
-                                    <th>Ghi chú</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="history-body">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
+            <div class="table-container">
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Nhóm cơ</th>
+                            <th>Bài tập</th>
+                            <th>Dụng cụ</th>
+                            <th>Chi tiết Sets</th>
+                            <th>Tổng khối lượng</th>
+                            <th>Ghi chú</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
             <!-- Edit Modal -->
             <div id="edit-modal" class="modal">
@@ -223,7 +223,7 @@
 
                         <div style="display: flex; gap: 10px; margin-top: 20px;">
                             <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-                            <button type="button" id="cancel-edit" class="btn btn-secondary">Hủy</button>
+                            <button type="button" id="cancel-edit" class="btn btn-secondary">Hủy bỏ</button>
                         </div>
                     </form>
                 </div>
@@ -255,4 +255,4 @@
 
     <script src="app.js?v=2" defer></script>
 </body>
-</html> 
+</html>
