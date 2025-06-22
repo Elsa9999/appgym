@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppGym Pro - Demo Tính Năng Nâng Cao</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .demo-title {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ai-recommendation {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+        }
+
+        .ai-recommendation h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .progress-chart {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .workout-builder {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .exercise-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .exercise-card:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+
+        .exercise-card.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .voice-demo {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .voice-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .voice-btn:hover {
+            background: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .workout-builder {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AppGym Pro</h1>
+            <p>Demo Tính Năng Nâng Cao - AI-Powered Fitness Companion</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">AI Personal Trainer</div>
+                <div class="feature-description">
+                    Trợ lý AI thông minh phân tích tiến độ, đưa ra gợi ý tối ưu và dự đoán hiệu suất tập luyện.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Advanced Analytics</div>
+                <div class="feature-description">
+                    Phân tích chi tiết với biểu đồ nâng cao, RPE tracking, và volume progression analysis.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🏋️</div>
+                <div class="feature-title">Smart Workout Builder</div>
+                <div class="feature-description">
+                    Tạo workout plan thông minh với AI, progressive overload suggestions và exercise substitutions.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <div class="feature-title">Social Features</div>
+                <div class="feature-description">
+                    Chia sẻ thành tích, tham gia challenges, tìm gym buddy và cạnh tranh với cộng đồng.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📷</div>
+                <div class="feature-title">Computer Vision</div>
+                <div class="feature-description">
+                    Phân tích form real-time, đếm reps tự động và theo dõi range of motion.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Smart Integration</div>
+                <div class="feature-description">
+                    Tích hợp với Apple Watch, Fitbit, smart home và IoT gym equipment.
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Recommendations Demo -->
+        <div class="demo-section">
+            <h2 class="demo-title">🤖 AI Recommendations</h2>
+            
+            <div class="ai-recommendation">
+                <h3>💡 Gợi ý Hôm Nay</h3>
+                <p>Dựa trên tiến độ của bạn, tôi khuyên nên tăng mức tạ Bench Press lên 2.5kg và thêm 1 set để tối ưu hypertrophy.</p>
+            </div>
+
+            <div class="ai-recommendation">
+                <h3>📈 Dự Đoán Tiến Độ</h3>
+                <p>Với tốc độ hiện tại, bạn sẽ đạt được 100kg Bench Press trong 3 tuần nữa. Tuy nhiên, cần chú ý đến form để tránh chấn thương.</p>
+            </div>
+
+            <div class="ai-recommendation">
+                <h3>🎯 Plateau Detection</h3>
+                <p>Phát hiện bạn đang plateau ở Deadlift. Khuyến nghị thay đổi rep scheme: 5x5 thay vì 3x8 để kích thích cơ bắp mới.</p>
+            </div>
+        </div>
+
+        <!-- Advanced Analytics Demo -->
+        <div class="demo-section">
+            <h2 class="demo-title">📊 Advanced Analytics</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">87.5</div>
+                    <div class="stat-label">1RM Bench (kg)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">+12%</div>
+                    <div class="stat-label">Tăng trưởng tháng</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">8.5</div>
+                    <div class="stat-label">RPE Trung bình</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">92%</div>
+                    <div class="stat-label">Workout Completion</div>
+                </div>
+            </div>
+
+            <div class="progress-chart">
+                <h3>📈 Volume Progression - Bench Press</h3>
+                <p>Tuần 1: 2,400kg | Tuần 2: 2,600kg | Tuần 3: 2,800kg | Tuần 4: 3,000kg</p>
+                <p><strong>Trend:</strong> Tăng ổn định 8% mỗi tuần - Excellent progress!</p>
+            </div>
+        </div>
+
+        <!-- Smart Workout Builder Demo -->
+        <div class="demo-section">
+            <h2 class="demo-title">🏋️ Smart Workout Builder</h2>
+            
+            <div class="workout-builder">
+                <div class="exercise-card selected">
+                    <h4>Bench Press</h4>
+                    <p>4 sets x 8-10 reps</p>
+                    <small>AI Suggested</small>
+                </div>
+                <div class="exercise-card">
+                    <h4>Incline DB Press</h4>
+                    <p>3 sets x 10-12 reps</p>
+                </div>
+                <div class="exercise-card">
+                    <h4>Cable Flyes</h4>
+                    <p>3 sets x 12-15 reps</p>
+                </div>
+                <div class="exercise-card">
+                    <h4>Dips</h4>
+                    <p>3 sets x 8-10 reps</p>
+                </div>
+            </div>
+
+            <div class="ai-recommendation">
+                <h3>🎯 Progressive Overload Suggestion</h3>
+                <p>Bench Press: Tăng từ 70kg lên 72.5kg (+2.5kg) vì bạn đã hoàn thành 3/4 sets với RPE ≤ 8.</p>
+            </div>
+        </div>
+
+        <!-- Voice Assistant Demo -->
+        <div class="demo-section">
+            <h2 class="demo-title">🎤 Voice Assistant</h2>
+            
+            <div class="voice-demo">
+                <p>Thử nói với AI Assistant:</p>
+                <button class="voice-btn" onclick="demoVoice('log')">"Log my bench press"</button>
+                <button class="voice-btn" onclick="demoVoice('suggest')">"What should I do today?"</button>
+                <button class="voice-btn" onclick="demoVoice('progress')">"How's my progress?"</button>
+                
+                <div id="voice-response" style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 10px; display: none;">
+                    <p id="response-text"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Features Demo -->
+        <div class="demo-section">
+            <h2 class="demo-title">👥 Social Features</h2>
+            
+            <div class="ai-recommendation">
+                <h3>🏆 Achievement Unlocked!</h3>
+                <p>🎉 "Bench Press Master" - Bạn đã tăng 20kg trong 3 tháng!</p>
+            </div>
+
+            <div class="ai-recommendation">
+                <h3>👥 Gym Buddy Found</h3>
+                <p>Nguyễn Văn A (500m away) cũng tập Bench Press. Muốn kết nối không?</p>
+            </div>
+
+            <div class="ai-recommendation">
+                <h3>🏅 Monthly Challenge</h3>
+                <p>Tham gia "Push-up Challenge" - Mục tiêu: 100 push-ups trong 1 tháng!</p>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="demo-section" style="text-align: center;">
+            <h2 class="demo-title">🚀 Sẵn Sàng Nâng Cấp?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px;">
+                AppGym Pro sẽ biến đổi hoàn toàn trải nghiệm tập luyện của bạn!
+            </p>
+            <button class="btn" onclick="alert('Coming Soon! 🚀')">Đăng Ký Beta Testing</button>
+            <button class="btn" onclick="alert('Contact us for partnership! 📧')">Trở Thành Partner</button>
+        </div>
+    </div>
+
+    <script>
+        function demoVoice(type) {
+            const responseDiv = document.getElementById('voice-response');
+            const responseText = document.getElementById('response-text');
+            
+            responseDiv.style.display = 'block';
+            
+            switch(type) {
+                case 'log':
+                    responseText.innerHTML = '🎤 "Đã ghi nhận Bench Press: 70kg x 8 reps. Tốt lắm! Mức tạ này phù hợp với tiến độ của bạn."';
+                    break;
+                case 'suggest':
+                    responseText.innerHTML = '🎤 "Hôm nay tôi khuyên bạn tập Upper Body. Bench Press, Incline Press, và Cable Flyes sẽ tối ưu cho hypertrophy."';
+                    break;
+                case 'progress':
+                    responseText.innerHTML = '🎤 "Tiến độ của bạn rất tốt! Bench Press tăng 12% trong tháng này. Dự kiến đạt 90kg trong 2 tuần nữa."';
+                    break;
+            }
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                responseDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Add some interactivity to exercise cards
+        document.querySelectorAll('.exercise-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+    </script>
+</body>
+</html> 
