@@ -30,7 +30,7 @@ body.dark-mode {
     --chart-grid-color: rgba(255, 255, 255, 0.1);
 }
 
-body {
+body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     margin: 0;
@@ -38,6 +38,7 @@ body {
     background: var(--bg-color);
     color: var(--text-color);
     transition: background 0.3s, color 0.3s;
+    border-radius: 8px;
 }
 
 header {
@@ -925,4 +926,5531 @@ tbody tr:hover {
     .workout-actions button {
         width: 100%;
     }
-} 
+}
+
+/* =================================================================================
+   Activity & Recovery Section Styles
+   ================================================================================= */
+.activity-recovery-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.muscle-heatmap-container,
+.activity-calendar-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.muscle-maps {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.muscle-map-view {
+    text-align: center;
+}
+
+.muscle-map-view h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.muscle-map-view svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.muscle-group {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.muscle-group:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+.muscle-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    pointer-events: none; /* Allows mouse events to pass through */
+    z-index: 1000;
+    white-space: nowrap;
+}
+
+/* Heatmap Colors */
+.muscle-group.sore { fill: #e74c3c; /* Red */ }
+.muscle-group.recovering { fill: #f39c12; /* Orange */ }
+.muscle-group.ready { fill: #2ecc71; /* Green */ }
+.muscle-group.neutral { fill: #bdc3c7; /* Gray */ }
+
+.heatmap-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+    font-size: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend-item .color-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+}
+
+.legend-item .ready { background-color: #2ecc71; }
+.legend-item .recovering { background-color: #f39c12; }
+.legend-item .sore { background-color: #e74c3c; }
+
+/* GitHub-Style Calendar */
+.calendar {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 3px;
+}
+
+.calendar-day {
+    width: 15px;
+    height: 15px;
+    background-color: #ebedf0;
+    border-radius: 3px;
+}
+
+.calendar-day:hover {
+    border: 1px solid #555;
+}
+
+.calendar-day[data-level="1"] { background-color: #c6e48b; }
+.calendar-day[data-level="2"] { background-color: #7bc96f; }
+.calendar-day[data-level="3"] { background-color: #239a3b; }
+.calendar-day[data-level="4"] { background-color: #196127; }
+
+.calendar-legend {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.calendar-legend .color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.calendar-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 125px; /* (15px + 3px gap) * 7 */
+    color: #888;
+}
+
+@media (max-width: 900px) {
+    .activity-recovery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .muscle-maps {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .calendar-day {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* =================================================================================
+   AI Recommendations Styles
+   ================================================================================= */
+
+.ai-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.ai-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+}
+
+.recommendations-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.recommendation-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 4px solid #ffd700;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-card.high-priority {
+    border-left-color: #ff4757;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+}
+
+.recommendation-card.medium-priority {
+    border-left-color: #ffa502;
+    background: linear-gradient(135deg, #ffa502 0%, #ff9500 100%);
+}
+
+.recommendation-card.low-priority {
+    border-left-color: #2ed573;
+    background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
+}
+
+.recommendation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.recommendation-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.recommendation-exercise {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.recommendation-message {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    opacity: 0.95;
+}
+
+.recommendation-action {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.recommendation-action:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.recommendation-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.no-recommendations {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.no-recommendations .icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.no-recommendations h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.no-recommendations p {
+    margin: 0;
+    font-style: italic;
+}
+
+/* Animation cho recommendations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recommendation-card {
+    animation: slideInUp 0.5s ease forwards;
+}
+
+.recommendation-card:nth-child(1) { animation-delay: 0.1s; }
+.recommendation-card:nth-child(2) { animation-delay: 0.2s; }
+.recommendation-card:nth-child(3) { animation-delay: 0.3s; }
+.recommendation-card:nth-child(4) { animation-delay: 0.4s; }
+.recommendation-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Loading animation */
+.ai-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #666;
+}
+
+.ai-loading .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design cho AI recommendations */
+@media (max-width: 768px) {
+    .ai-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .ai-controls select {
+        width: 100%;
+    }
+    
+    .recommendation-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .recommendation-exercise {
+        align-self: flex-start;
+    }
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Recommendations Styles
+   ================================================================================= */
+.ai-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.ai-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+}
+
+.recommendations-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.recommendation-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 4px solid #ffd700;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-card.high-priority {
+    border-left-color: #ff4757;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+}
+
+.recommendation-card.medium-priority {
+    border-left-color: #ffa502;
+    background: linear-gradient(135deg, #ffa502 0%, #ff9500 100%);
+}
+
+.recommendation-card.low-priority {
+    border-left-color: #2ed573;
+    background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
+}
+
+.recommendation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.recommendation-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.recommendation-exercise {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.recommendation-message {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    opacity: 0.95;
+}
+
+.recommendation-action {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.recommendation-action:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.recommendation-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.no-recommendations {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.no-recommendations .icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.no-recommendations h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.no-recommendations p {
+    margin: 0;
+    font-style: italic;
+}
+
+/* Animation cho recommendations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recommendation-card {
+    animation: slideInUp 0.5s ease forwards;
+}
+
+.recommendation-card:nth-child(1) { animation-delay: 0.1s; }
+.recommendation-card:nth-child(2) { animation-delay: 0.2s; }
+.recommendation-card:nth-child(3) { animation-delay: 0.3s; }
+.recommendation-card:nth-child(4) { animation-delay: 0.4s; }
+.recommendation-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Loading animation */
+.ai-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #666;
+}
+
+.ai-loading .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design cho AI recommendations */
+@media (max-width: 768px) {
+    .ai-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .ai-controls select {
+        width: 100%;
+    }
+    
+    .recommendation-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .recommendation-exercise {
+        align-self: flex-start;
+    }
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* =================================================================================
+   AI Workout Builder Styles
+   ================================================================================= */
+
+.ai-builder-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.ai-builder-form #generate-ai-workout {
+    width: 100%;
+}
+
+.ai-plan-modal-content {
+    max-width: 600px;
+}
+
+#ai-plan-container .plan-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#ai-plan-container .plan-exercise {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#ai-plan-container .plan-exercise h4 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #667eea;
+}
+
+#ai-plan-container .plan-exercise p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+#ai-plan-container .plan-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#ai-plan-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 15px;
+    color: #555;
+}
+
+#ai-plan-container .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* =================================================================================
+   Personal Records (PR) Section Styles
+   ================================================================================= */
+.pr-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pr-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
+    transition: all 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.pr-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.pr-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pr-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pr-card li:last-child {
+    border-bottom: none;
+}
+
+.pr-card li .pr-type {
+    font-weight: 500;
+}
+
+.pr-card li .pr-value {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* PR Celebration Modal */
+.pr-modal-content {
+    background: linear-gradient(145deg, #764ba2, #667eea);
+    color: white;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.pr-celebration h2 {
+    font-size: 2.5em;
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pr-details-container {
+    margin-top: 15px;
+}
+
+.pr-detail-item {
+    font-size: 1.2em;
+    animation: slide-up 0.5s 0.3s ease-out forwards;
+    opacity: 0;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.pr-detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.pr-detail-item strong {
+    color: #ffd700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0px); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  animation: confetti-fall 5s linear infinite;
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotateZ(0deg);
+    opacity: 

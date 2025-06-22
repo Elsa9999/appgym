@@ -27,79 +27,113 @@
         </div>
 
         <div id="app-content" class="hidden">
-            <header>
-                <h1>🏋️ Theo Dõi Tập Gym</h1>
-                <div class="header-controls">
-                    <div id="user-info" class="hidden">
-                        <span id="user-display-name"></span>
-                        <button id="logout-btn" class="secondary">Đăng xuất</button>
+            <main>
+                <div class="main-grid">
+                    <!-- Left Column -->
+                    <div class="main-column">
+                        <div class="workout-form-container card">
+                            <h1>📝 Trình theo dõi tập Gym</h1>
+                    
+                            <form id="workout-form">
+                                <div class="form-group">
+                                    <label for="workout-date">Ngày tập</label>
+                                    <input type="date" id="workout-date" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="muscle-group">Nhóm cơ</label>
+                                    <select id="muscle-group" required>
+                                        <option value="">-- Chọn nhóm cơ --</option>
+                                        <option value="Ngực">Ngực (Chest)</option>
+                                        <option value="Lưng">Lưng (Back)</option>
+                                        <option value="Chân">Chân (Legs)</option>
+                                        <option value="Tay">Tay (Arms)</option>
+                                        <option value="Bụng">Bụng (Abs)</option>
+                                        <option value="Vai">Vai (Shoulders)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exercise-name">Tên bài tập</label>
+                                    <input type="text" id="exercise-name" placeholder="VD: Bench Press, Pull-up, Push-up..." required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exercise-type">Loại bài tập</label>
+                                    <select id="exercise-type" required>
+                                        <option value="">-- Chọn loại bài tập --</option>
+                                        <option value="weight">Có tạ (Weight Training)</option>
+                                        <option value="bodyweight">Không tạ (Bodyweight)</option>
+                                        <option value="assisted">Có hỗ trợ khối lượng (Assisted)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="equipment-group">
+                                    <label for="equipment">Máy tập / Dụng cụ</label>
+                                    <input type="text" id="equipment" placeholder="VD: Tạ đòn, Xà đơn, Máy hỗ trợ, Dây kháng lực...">
+                                </div>
+
+                                <div class="sets-section">
+                                    <div class="sets-header">
+                                        <h3>Chi tiết các Set</h3>
+                                        <button type="button" id="add-set" class="btn btn-secondary">+ Thêm Set</button>
+                                    </div>
+                                    <div id="sets-container">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="notes">Ghi chú thêm</label>
+                                    <textarea id="notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Lưu bài tập</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="theme-switcher-container">
-                        <label for="theme-toggle" class="theme-switcher">
-                            <input type="checkbox" id="theme-toggle" />
-                            <span class="slider"></span>
-                        </label>
+                    <!-- Right Column -->
+                    <div class="main-column">
+                        <div class="card">
+                            <h2>🤖 AI - Trợ Lý Tập Luyện</h2>
+                            <p class="description">Mô tả mục tiêu của bạn, AI sẽ tạo một buổi tập tối ưu dành riêng cho bạn.</p>
+                            <div class="ai-builder-form">
+                                <textarea id="ai-workout-prompt" placeholder="Ví dụ: 'Tạo buổi tập chân và bụng trong 90 phút, tập trung vào sức mạnh'"></textarea>
+                                <button id="generate-ai-workout" class="btn btn-primary">Tạo Buổi Tập</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div id="history-table-container">
+                                <div class="history-controls">
+                                     <h2>Lịch sử tập luyện</h2>
+                                    <div class="data-controls">
+                                        <button id="export-data" class="btn btn-success">📤 Xuất dữ liệu</button>
+                                        <input type="file" id="import-file" accept=".json" style="display: none;">
+                                        <button id="import-data" class="btn btn-secondary">📥 Nhập dữ liệu</button>
+                                        <button id="delete-all" class="btn btn-danger">🗑️ Xóa tất cả</button>
+                                    </div>
+                                </div>
+                                <div class="table-container">
+                                    <table id="history-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Ngày</th>
+                                                <th>Nhóm cơ</th>
+                                                <th>Bài tập</th>
+                                                <th>Dụng cụ</th>
+                                                <th>Chi tiết Sets</th>
+                                                <th>Tổng khối lượng</th>
+                                                <th>Ghi chú</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="history-body">
+                                            </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </header>
-            <div class="container workout-form">
-                <h1>📝 Trình theo dõi tập Gym</h1>
-        
-                <form id="workout-form">
-                    <div class="form-group">
-                        <label for="workout-date">Ngày tập</label>
-                        <input type="date" id="workout-date" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="muscle-group">Nhóm cơ</label>
-                        <select id="muscle-group" required>
-                            <option value="">-- Chọn nhóm cơ --</option>
-                            <option value="Ngực">Ngực (Chest)</option>
-                            <option value="Lưng">Lưng (Back)</option>
-                            <option value="Chân">Chân (Legs)</option>
-                            <option value="Tay">Tay (Arms)</option>
-                            <option value="Bụng">Bụng (Abs)</option>
-                            <option value="Vai">Vai (Shoulders)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="exercise-name">Tên bài tập</label>
-                        <input type="text" id="exercise-name" placeholder="VD: Bench Press, Pull-up, Push-up..." required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="exercise-type">Loại bài tập</label>
-                        <select id="exercise-type" required>
-                            <option value="">-- Chọn loại bài tập --</option>
-                            <option value="weight">Có tạ (Weight Training)</option>
-                            <option value="bodyweight">Không tạ (Bodyweight)</option>
-                            <option value="assisted">Có hỗ trợ khối lượng (Assisted)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" id="equipment-group">
-                        <label for="equipment">Máy tập / Dụng cụ</label>
-                        <input type="text" id="equipment" placeholder="VD: Tạ đòn, Xà đơn, Máy hỗ trợ, Dây kháng lực...">
-                    </div>
-
-                    <div class="sets-section">
-                        <div class="sets-header">
-                            <h3>Chi tiết các Set</h3>
-                            <button type="button" id="add-set" class="btn btn-secondary">+ Thêm Set</button>
-                        </div>
-                        <div id="sets-container">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="notes">Ghi chú thêm</label>
-                        <textarea id="notes" placeholder="Cảm nhận, kỹ thuật..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Lưu bài tập</button>
-                </form>
 
                 <div class="chart-section">
                     <h2>📈 Biểu đồ so sánh bài tập</h2>
@@ -128,6 +162,10 @@
                     <h2>📊 Thống kê tổng quan</h2>
                     <div class="stats-grid">
                         <div class="stat-card">
+                            <h3>Tổng khối lượng (7 ngày qua)</h3>
+                            <div id="total-volume" class="stat-value">0 kg</div>
+                        </div>
+                        <div class="stat-card">
                             <h3>Tổng số buổi tập</h3>
                             <div id="total-workouts" class="stat-value">0</div>
                         </div>
@@ -139,9 +177,100 @@
                             <h3>Nhóm cơ tập nhiều nhất</h3>
                             <div id="most-muscle-group" class="stat-value">-</div>
                         </div>
-                        <div class="stat-card">
-                            <h3>Tổng khối lượng</h3>
-                            <div id="total-volume" class="stat-value">0 kg</div>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <h2>🤖 AI Gợi Ý Thông Minh</h2>
+                    <div class="ai-controls">
+                        <button id="refresh-ai" class="btn btn-primary">🔄 Cập Nhật Gợi Ý</button>
+                        <select id="ai-filter">
+                            <option value="all">Tất cả gợi ý</option>
+                            <option value="high">Ưu tiên cao</option>
+                            <option value="medium">Ưu tiên trung bình</option>
+                            <option value="low">Ưu tiên thấp</option>
+                        </select>
+                    </div>
+                    <div id="ai-recommendations" class="recommendations-container">
+                        <p style="text-align: center; color: #666; font-style: italic;">Đang phân tích dữ liệu để đưa ra gợi ý...</p>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <h2>💪 Hoạt Động & Phục Hồi</h2>
+                    <div class="activity-recovery-grid">
+                        <div class="muscle-heatmap-container">
+                            <h3>Heatmap Nhóm Cơ</h3>
+                            <div class="muscle-maps">
+                                <div class="muscle-map-view">
+                                    <h4>Phía trước</h4>
+                                    <svg id="muscle-map-front" viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                                        <!-- Body Outline -->
+                                        <path d="M90,90 C80,90 80,80 80,70 C80,50 90,40 100,40 C110,40 120,50 120,70 C120,80 120,90 110,90 L90,90 Z" fill="#e0e0e0" stroke="#ccc" stroke-width="1"></path>
+                                        <path d="M100,90 L100,200 L80,200 L80,380 L95,380 L95,300 L105,300 L105,380 L120,380 L120,200 Z" fill="none" stroke="#ccc" stroke-width="1"></path>
+                                        
+                                        <!-- Muscle Groups -->
+                                        <rect id="muscle-chest" class="muscle-group" data-muscle="Ngực" x="82" y="105" width="36" height="35" rx="3" fill="#ccc"></rect>
+                                        <rect id="muscle-abs" class="muscle-group" data-muscle="Bụng" x="85" y="145" width="30" height="50" rx="3" fill="#ccc"></rect>
+                                        <g class="muscle-group" data-muscle="Vai">
+                                            <rect id="muscle-shoulders-left-front" x="65" y="95" width="20" height="25" rx="10" fill="#ccc"></rect>
+                                            <rect id="muscle-shoulders-right-front" x="115" y="95" width="20" height="25" rx="10" fill="#ccc"></rect>
+                                        </g>
+                                        <g class="muscle-group" data-muscle="Tay">
+                                            <rect id="muscle-arms-left-front" x="62" y="125" width="18" height="60" rx="8" fill="#ccc"></rect>
+                                            <rect id="muscle-arms-right-front" x="120" y="125" width="18" height="60" rx="8" fill="#ccc"></rect>
+                                        </g>
+                                        <g class="muscle-group" data-muscle="Chân">
+                                            <rect id="muscle-legs-left-front" x="80" y="200" width="18" height="90" rx="8" fill="#ccc"></rect>
+                                            <rect id="muscle-legs-right-front" x="102" y="200" width="18" height="90" rx="8" fill="#ccc"></rect>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <div class="muscle-map-view">
+                                    <h4>Phía sau</h4>
+                                    <svg id="muscle-map-back" viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                                        <!-- Body Outline -->
+                                        <path d="M90,90 C80,90 80,80 80,70 C80,50 90,40 100,40 C110,40 120,50 120,70 C120,80 120,90 110,90 L90,90 Z" fill="#e0e0e0" stroke="#ccc" stroke-width="1"></path>
+                                        <path d="M100,90 L100,200 L80,200 L80,380 L95,380 L95,300 L105,300 L105,380 L120,380 L120,200 Z" fill="none" stroke="#ccc" stroke-width="1"></path>
+
+                                        <!-- Muscle Groups -->
+                                        <rect id="muscle-back" class="muscle-group" data-muscle="Lưng" x="82" y="105" width="36" height="90" rx="3" fill="#ccc"></rect>
+                                         <g class="muscle-group" data-muscle="Vai">
+                                            <rect id="muscle-shoulders-left-back" x="65" y="95" width="20" height="25" rx="10" fill="#ccc"></rect>
+                                            <rect id="muscle-shoulders-right-back" x="115" y="95" width="20" height="25" rx="10" fill="#ccc"></rect>
+                                        </g>
+                                        <g class="muscle-group" data-muscle="Tay">
+                                            <rect id="muscle-arms-left-back" x="62" y="125" width="18" height="60" rx="8" fill="#ccc"></rect>
+                                            <rect id="muscle-arms-right-back" x="120" y="125" width="18" height="60" rx="8" fill="#ccc"></rect>
+                                        </g>
+                                        <g class="muscle-group" data-muscle="Chân">
+                                            <rect id="muscle-legs-left-back" x="80" y="200" width="18" height="90" rx="8" fill="#ccc"></rect>
+                                            <rect id="muscle-legs-right-back" x="102" y="200" width="18" height="90" rx="8" fill="#ccc"></rect>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div id="muscle-tooltip" class="muscle-tooltip" style="display:none;"></div>
+                            <div class="heatmap-legend">
+                                <div class="legend-item"><span class="color-box ready"></span>Sẵn sàng tập</div>
+                                <div class="legend-item"><span class="color-box recovering"></span>Đang hồi phục</div>
+                                <div class="legend-item"><span class="color-box sore"></span>Cần nghỉ thêm</div>
+                            </div>
+                        </div>
+                        <div class="activity-calendar-container">
+                            <h3>Lịch Sử Tập Luyện (6 tháng qua)</h3>
+                            <div id="activity-calendar" class="calendar">
+                                <!-- Calendar will be generated here by JS -->
+                                <div class="calendar-loading">Đang tải lịch sử...</div>
+                            </div>
+                            <div class="calendar-legend">
+                                <span>Ít</span>
+                                <span class="color-box" style="background-color: #c6e48b;"></span>
+                                <span class="color-box" style="background-color: #7bc96f;"></span>
+                                <span class="color-box" style="background-color: #239a3b;"></span>
+                                <span class="color-box" style="background-color: #196127;"></span>
+                                <span>Nhiều</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,36 +287,20 @@
                     </div>
                 </div>
 
-                <div class="history-section">
-                    <div class="history-controls">
-                         <h2>Lịch sử tập luyện</h2>
-                        <div class="data-controls">
-                            <button id="export-data" class="btn btn-success">📤 Xuất dữ liệu</button>
-                            <input type="file" id="import-file" accept=".json" style="display: none;">
-                            <button id="import-data" class="btn btn-secondary">📥 Nhập dữ liệu</button>
-                            <button id="delete-all" class="btn btn-danger">🗑️ Xóa tất cả</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Ngày</th>
-                                    <th>Nhóm cơ</th>
-                                    <th>Bài tập</th>
-                                    <th>Dụng cụ</th>
-                                    <th>Chi tiết Sets</th>
-                                    <th>Tổng khối lượng</th>
-                                    <th>Ghi chú</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="history-body">
-                                </tbody>
-                        </table>
+                <div class="chart-section">
+                    <h2>🏆 Kỷ Lục Cá Nhân (PRs)</h2>
+                    <div id="pr-list" class="pr-list-container">
+                        <p style="text-align: center; color: #666;">Chưa có kỷ lục nào được ghi nhận. Hãy tập luyện và phá vỡ giới hạn!</p>
                     </div>
                 </div>
-            </div>
+
+                <div class="chart-section">
+                    <h2>⚡️ Quản Lý Dữ Liệu</h2>
+                    <div class="data-management-grid">
+                        <button id="delete-all" class="btn btn-danger">Xóa Toàn Bộ Dữ Liệu</button>
+                    </div>
+                </div>
+            </main>
 
             <!-- Edit Modal -->
             <div id="edit-modal" class="modal">
@@ -255,6 +368,31 @@
                             <button type="button" id="cancel-edit" class="btn btn-secondary">Hủy bỏ</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Workout Plan Modal -->
+        <div id="ai-plan-modal" class="modal" style="display:none;">
+            <div class="modal-content ai-plan-modal-content">
+                <span id="close-ai-plan-modal" class="close-btn">&times;</span>
+                <div id="ai-plan-container">
+                    <!-- Plan will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PR Celebration Modal -->
+        <div id="pr-modal" class="modal" style="display:none;">
+            <div class="modal-content pr-modal-content">
+                <span id="close-pr-modal" class="close-btn">&times;</span>
+                <div class="pr-celebration">
+                    <!-- Confetti will be added dynamically by JS -->
+                    <h2>🎉 PR MỚI! 🎉</h2>
+                    <p>Chúc mừng bạn đã phá kỷ lục cá nhân!</p>
+                    <div id="pr-details-container" class="pr-details-container">
+                        <!-- PR details will be inserted here by JS -->
+                    </div>
                 </div>
             </div>
         </div>
