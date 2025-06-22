@@ -45,20 +45,34 @@ let rmChart = null;
 /**
  * Adds a new set input group to the specified container.
  * @param {string} containerId The ID of the container element for sets.
+ * @param {string} exerciseType The type of exercise (weight or bodyweight)
  */
-function addSet(containerId) {
+function addSet(containerId, exerciseType = 'weight') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     const setNumber = container.children.length + 1;
     const setEl = document.createElement('div');
     setEl.classList.add('set-item');
-    setEl.innerHTML = `
-        <label>Set ${setNumber}:</label>
-        <input type="number" class="set-weight" placeholder="Tạ (kg)" required>
-        <input type="number" class="set-reps" placeholder="Reps" required>
-        <button type="button" class="remove-set-btn">Xóa</button>
-    `;
+    setEl.classList.add(exerciseType === 'bodyweight' ? 'bodyweight-exercise' : 'weight-exercise');
+    
+    if (exerciseType === 'bodyweight') {
+        // For bodyweight exercises, only show reps and time
+        setEl.innerHTML = `
+            <label>Set ${setNumber}:</label>
+            <input type="number" class="set-reps" placeholder="Reps" required>
+            <input type="number" class="set-time" placeholder="Thời gian (giây)" min="0" step="1">
+            <button type="button" class="remove-set-btn">Xóa</button>
+        `;
+    } else {
+        // For weight exercises, show weight and reps
+        setEl.innerHTML = `
+            <label>Set ${setNumber}:</label>
+            <input type="number" class="set-weight" placeholder="Tạ (kg)" required>
+            <input type="number" class="set-reps" placeholder="Reps" required>
+            <button type="button" class="remove-set-btn">Xóa</button>
+        `;
+    }
 
     // Add event listener to the new remove button
     setEl.querySelector('.remove-set-btn').addEventListener('click', () => {
@@ -73,6 +87,17 @@ function addSet(containerId) {
     container.appendChild(setEl);
 }
 
+function updateSetForm(exerciseType, containerId = 'sets-container') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Clear existing sets
+    container.innerHTML = '';
+    
+    // Add one initial set with the correct format
+    addSet(containerId, exerciseType);
+}
+
 function renderHistory() {
     const historyBody = document.getElementById('history-body');
     if (!historyBody) return;
@@ -85,8 +110,29 @@ function renderHistory() {
     historyBody.innerHTML = workouts.map(w => {
         // Default to an empty array if sets are missing
         const sets = w.sets || [];
-        const setsDetails = sets.map(s => `<li>${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
-        const totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+        const exerciseType = w.exerciseType || 'weight';
+        
+        let setsDetails = '';
+        if (exerciseType === 'bodyweight') {
+            setsDetails = sets.map(s => {
+                const reps = s.reps || 0;
+                const time = s.time || 0;
+                if (time > 0) {
+                    return `<li>${reps} reps + ${time}s</li>`;
+                } else {
+                    return `<li>${reps} reps</li>`;
+                }
+            }).join('');
+        } else {
+            setsDetails = sets.map(s => `<li>${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
+        }
+        
+        let totalVolume = 0;
+        if (exerciseType === 'bodyweight') {
+            totalVolume = sets.reduce((acc, s) => acc + (s.reps || 0), 0);
+        } else {
+            totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+        }
 
         return `
             <tr data-id="${w.id}">
@@ -95,7 +141,7 @@ function renderHistory() {
                 <td>${w.exercise || 'Không tên'}</td>
                 <td>${w.equipment || ''}</td>
                 <td><ul class="sets-list">${setsDetails}</ul></td>
-                <td>${totalVolume.toLocaleString('vi-VN')} kg</td>
+                <td>${exerciseType === 'bodyweight' ? `${totalVolume} reps` : `${totalVolume.toLocaleString('vi-VN')} kg`}</td>
                 <td>${w.notes || ''}</td>
                 <td class="workout-actions">
                     <button class="edit-btn">Sửa</button>
@@ -133,12 +179,29 @@ function updateStatistics() {
         .sort(([,a], [,b]) => b - a)[0];
     document.getElementById('most-muscle-group').textContent = mostMuscleGroup ? mostMuscleGroup[0] : '-';
 
-    // Tổng khối lượng
+    // Tổng khối lượng/reps
     const totalVolume = workouts.reduce((acc, w) => {
         const sets = w.sets || [];
-        return acc + sets.reduce((setAcc, s) => setAcc + ((s.weight || 0) * (s.reps || 0)), 0);
+        const exerciseType = w.exerciseType || 'weight';
+        
+        if (exerciseType === 'bodyweight') {
+            return acc + sets.reduce((setAcc, s) => setAcc + (s.reps || 0), 0);
+        } else {
+            return acc + sets.reduce((setAcc, s) => setAcc + ((s.weight || 0) * (s.reps || 0)), 0);
+        }
     }, 0);
-    document.getElementById('total-volume').textContent = `${totalVolume.toLocaleString('vi-VN')} kg`;
+    
+    // Đếm số bài tập bodyweight và weight
+    const bodyweightCount = workouts.filter(w => (w.exerciseType || 'weight') === 'bodyweight').length;
+    const weightCount = workouts.filter(w => (w.exerciseType || 'weight') === 'weight').length;
+    
+    if (bodyweightCount > 0 && weightCount > 0) {
+        document.getElementById('total-volume').textContent = `${totalVolume.toLocaleString('vi-VN')} (${weightCount} bài có tạ, ${bodyweightCount} bài không tạ)`;
+    } else if (bodyweightCount > 0) {
+        document.getElementById('total-volume').textContent = `${totalVolume.toLocaleString('vi-VN')} reps (bodyweight)`;
+    } else {
+        document.getElementById('total-volume').textContent = `${totalVolume.toLocaleString('vi-VN')} kg`;
+    }
 }
 
 function updateChartOptions() {
@@ -206,13 +269,23 @@ function updateProgressChart() {
     const labels = filteredWorkouts.map(w => new Date(w.date).toLocaleDateString('vi-VN'));
     const data = filteredWorkouts.map(w => {
         const sets = w.sets || [];
+        const exerciseType = w.exerciseType || 'weight';
+        
         switch (selectedMetric) {
             case 'weight':
-                return Math.max(...sets.map(s => s.weight || 0));
+                if (exerciseType === 'bodyweight') {
+                    return Math.max(...sets.map(s => s.reps || 0));
+                } else {
+                    return Math.max(...sets.map(s => s.weight || 0));
+                }
             case 'reps':
                 return Math.max(...sets.map(s => s.reps || 0));
             case 'volume':
-                return sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+                if (exerciseType === 'bodyweight') {
+                    return sets.reduce((acc, s) => acc + (s.reps || 0), 0);
+                } else {
+                    return sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+                }
             default:
                 return 0;
         }
@@ -225,13 +298,24 @@ function updateProgressChart() {
         progressChart.destroy();
     }
 
+    const selectedWorkout = filteredWorkouts[0];
+    const exerciseType = selectedWorkout ? (selectedWorkout.exerciseType || 'weight') : 'weight';
+    
+    let yAxisLabel = '';
+    if (selectedMetric === 'weight') {
+        yAxisLabel = exerciseType === 'bodyweight' ? 'Số lần lặp (reps)' : 'Mức tạ (kg)';
+    } else if (selectedMetric === 'reps') {
+        yAxisLabel = 'Số lần lặp (reps)';
+    } else {
+        yAxisLabel = exerciseType === 'bodyweight' ? 'Tổng reps' : 'Tổng khối lượng (kg)';
+    }
+
     progressChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: selectedMetric === 'weight' ? 'Mức tạ (kg)' : 
-                       selectedMetric === 'reps' ? 'Số lần lặp (reps)' : 'Tổng khối lượng (kg)',
+                label: yAxisLabel,
                 data: data,
                 borderColor: '#4a90e2',
                 backgroundColor: 'rgba(74, 144, 226, 0.1)',
@@ -489,7 +573,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Listener for adding a new set to the main form
-    addSetBtn.addEventListener('click', () => addSet('sets-container'));
+    addSetBtn.addEventListener('click', () => {
+        const exerciseType = document.getElementById('exercise-type').value || 'weight';
+        addSet('sets-container', exerciseType);
+    });
+
+    // Listener for exercise type change
+    const exerciseTypeSelect = document.getElementById('exercise-type');
+    if (exerciseTypeSelect) {
+        exerciseTypeSelect.addEventListener('change', (e) => {
+            const exerciseType = e.target.value;
+            updateSetForm(exerciseType, 'sets-container');
+        });
+    }
+
+    // Listener for edit exercise type change
+    const editExerciseTypeSelect = document.getElementById('edit-exercise-type');
+    if (editExerciseTypeSelect) {
+        editExerciseTypeSelect.addEventListener('change', (e) => {
+            const exerciseType = e.target.value;
+            updateSetForm(exerciseType, 'edit-sets-container');
+        });
+    }
 
     // Chart event listeners
     if (chartExercise) {
@@ -595,12 +700,34 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const exerciseType = document.getElementById('exercise-type').value;
+        if (!exerciseType) {
+            alert("Vui lòng chọn loại bài tập!");
+            return;
+        }
+
         const setsContainer = document.getElementById('sets-container');
-        const setsData = Array.from(setsContainer.querySelectorAll('.set-item')).map(setEl => {
-            const weight = setEl.querySelector('.set-weight').value;
-            const reps = setEl.querySelector('.set-reps').value;
-            return { weight: parseFloat(weight) || 0, reps: parseInt(reps) || 0 };
-        });
+        let setsData = [];
+        
+        if (exerciseType === 'bodyweight') {
+            setsData = Array.from(setsContainer.querySelectorAll('.set-item')).map(setEl => {
+                const reps = setEl.querySelector('.set-reps').value;
+                const time = setEl.querySelector('.set-time').value;
+                return { 
+                    reps: parseInt(reps) || 0, 
+                    time: parseInt(time) || 0 
+                };
+            });
+        } else {
+            setsData = Array.from(setsContainer.querySelectorAll('.set-item')).map(setEl => {
+                const weight = setEl.querySelector('.set-weight').value;
+                const reps = setEl.querySelector('.set-reps').value;
+                return { 
+                    weight: parseFloat(weight) || 0, 
+                    reps: parseInt(reps) || 0 
+                };
+            });
+        }
 
         if (setsData.length === 0) {
             alert("Vui lòng thêm ít nhất một set!");
@@ -611,6 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
             date: document.getElementById('workout-date').value || new Date().toISOString().split('T')[0],
             muscleGroup: document.getElementById('muscle-group').value,
             exercise: document.getElementById('exercise-name').value,
+            exerciseType: exerciseType,
             equipment: document.getElementById('equipment').value,
             notes: document.getElementById('notes').value,
             sets: setsData,
@@ -622,6 +750,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Đã lưu bài tập thành công!");
             workoutForm.reset();
             setsContainer.innerHTML = ''; // Clear sets from the UI
+            // Add one initial set back
+            addSet('sets-container', 'weight');
         } catch (error) {
             console.error("Lỗi khi lưu bài tập: ", error);
             alert("Đã có lỗi xảy ra khi lưu bài tập. Vui lòng thử lại.");

@@ -66,12 +66,21 @@
 
                     <div class="form-group">
                         <label for="exercise-name">Tên bài tập</label>
-                        <input type="text" id="exercise-name" placeholder="VD: Bench Press" required>
+                        <input type="text" id="exercise-name" placeholder="VD: Bench Press, Pull-up, Push-up..." required>
                     </div>
 
                     <div class="form-group">
+                        <label for="exercise-type">Loại bài tập</label>
+                        <select id="exercise-type" required>
+                            <option value="">-- Chọn loại bài tập --</option>
+                            <option value="weight">Có tạ (Weight Training)</option>
+                            <option value="bodyweight">Không tạ (Bodyweight)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="equipment-group">
                         <label for="equipment">Máy tập / Dụng cụ</label>
-                        <input type="text" id="equipment" placeholder="VD: Tạ đòn">
+                        <input type="text" id="equipment" placeholder="VD: Tạ đòn, Xà đơn, Sàn...">
                     </div>
 
                     <div class="sets-section">
@@ -208,12 +217,21 @@
 
                         <div class="form-group">
                             <label for="edit-exercise-name">Tên bài tập</label>
-                            <input type="text" id="edit-exercise-name" placeholder="VD: Bench Press" required>
+                            <input type="text" id="edit-exercise-name" placeholder="VD: Bench Press, Pull-up, Push-up..." required>
                         </div>
 
                         <div class="form-group">
+                            <label for="edit-exercise-type">Loại bài tập</label>
+                            <select id="edit-exercise-type" required>
+                                <option value="">-- Chọn loại bài tập --</option>
+                                <option value="weight">Có tạ (Weight Training)</option>
+                                <option value="bodyweight">Không tạ (Bodyweight)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="edit-equipment-group">
                             <label for="edit-equipment">Máy tập / Dụng cụ</label>
-                            <input type="text" id="edit-equipment" placeholder="VD: Tạ đòn">
+                            <input type="text" id="edit-equipment" placeholder="VD: Tạ đòn, Xà đơn, Sàn...">
                         </div>
 
                         <div class="sets-section">

@@ -270,20 +270,47 @@ textarea {
 
 .set-item {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto auto;
     gap: 10px;
     align-items: center;
-    padding: 10px;
-    background-color: white;
-    border-radius: 5px;
+    padding: 15px;
+    background: var(--bg-color);
+    border-radius: 6px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
 }
 
-.set-number {
-    font-weight: bold;
-    color: #3498db;
-    text-align: center;
+.set-item.weight-exercise {
+    grid-template-columns: auto 1fr 1fr auto;
+}
+
+.set-item.bodyweight-exercise {
+    grid-template-columns: auto 1fr 1fr auto;
+}
+
+.set-item label {
+    font-weight: 500;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.set-item input {
+    margin: 0;
+    padding: 8px 12px;
+}
+
+.remove-set-btn {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.remove-set-btn:hover {
+    background: #c82333;
 }
 
 .rm-display {
@@ -578,6 +605,23 @@ tbody tr:hover {
         flex-direction: column;
         text-align: center;
     }
+
+    .set-item.weight-exercise,
+    .set-item.bodyweight-exercise {
+        grid-template-columns: 1fr;
+    }
+
+    .set-item label {
+        text-align: center;
+    }
+
+    .workout-actions {
+        flex-direction: column;
+    }
+
+    .workout-actions button {
+        width: 100%;
+    }
 }
 
 /* Auth Styles */
@@ -825,45 +869,6 @@ tbody tr:hover {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-/* Set item improvements */
-.set-item {
-    display: grid;
-    grid-template-columns: auto 1fr 1fr auto;
-    gap: 10px;
-    align-items: center;
-    padding: 15px;
-    background: var(--bg-color);
-    border-radius: 6px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border-color);
-}
-
-.set-item label {
-    font-weight: 500;
-    margin: 0;
-    color: var(--text-color);
-}
-
-.set-item input {
-    margin: 0;
-    padding: 8px 12px;
-}
-
-.remove-set-btn {
-    background: var(--danger-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-}
-
-.remove-set-btn:hover {
-    background: #c82333;
-}
-
 /* Responsive improvements */
 @media (max-width: 768px) {
     .stats-grid {
@@ -891,6 +896,11 @@ tbody tr:hover {
     .set-item {
         grid-template-columns: 1fr;
         gap: 8px;
+    }
+    
+    .set-item.weight-exercise,
+    .set-item.bodyweight-exercise {
+        grid-template-columns: 1fr;
     }
     
     .set-item label {
