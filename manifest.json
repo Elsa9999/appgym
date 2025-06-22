@@ -1,29 +1,54 @@
 {
   "name": "AppGym - Theo Dõi Tập Luyện",
   "short_name": "AppGym",
-  "description": "Ứng dụng theo dõi quá trình tập gym cá nhân của bạn.",
-  "start_url": ".",
+  "description": "Ứng dụng theo dõi quá trình tập gym cá nhân với Firebase sync, biểu đồ tiến độ và thống kê chi tiết.",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#1f1f1f",
+  "orientation": "portrait",
+  "background_color": "#f4f7f6",
   "theme_color": "#4a90e2",
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "vi",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "icons/38464.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "icons/38464.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Thêm bài tập mới",
+      "short_name": "Thêm bài tập",
+      "description": "Thêm bài tập mới vào lịch sử",
+      "url": "/?action=add",
+      "icons": [
+        {
+          "src": "icons/38464.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
-      "src": "icons/maskable_icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
+      "name": "Xem thống kê",
+      "short_name": "Thống kê",
+      "description": "Xem thống kê tập luyện",
+      "url": "/?action=stats",
+      "icons": [
+        {
+          "src": "icons/38464.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 } 
