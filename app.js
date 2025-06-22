@@ -29,24 +29,14 @@ db.enablePersistence()
     }
   });
 
-// =================================================================================
-// Dữ liệu gợi ý bài tập (Workout Templates)
-// =================================================================================
-const workoutTemplates = {
-  'nguc_tay_sau': ['Ngực trên với máy', 'Ngực giữa với máy', 'Ép ngực với cáp', 'Dip', 'Tay sau với cáp (dây dài)'],
-  'vai': ['Vai trước với máy', 'Bay vai với cáp để sau', 'Bay vai với cáp để trước', 'Face Pull', 'Cầu vai'],
-  'lung_tay_truoc': ['Pull up', 'Low row machine', 'Lat pulldown hẹp', 'Chest support row', 'Seated row wide', 'Back extension', 'Preacher curl'],
-  'chan': ['Squat (Gánh tạ)', 'Leg Press (Đạp đùi)', 'Leg Extension (Đá đùi trước)', 'Lying Leg Curl (Móc đùi sau)', 'Calf Raise (Nhón bắp chuối)', 'Lunge'],
-  'tay': ['Barbell Bicep Curl (Cuốn tạ đòn)', 'Dumbbell Bicep Curl (Cuốn tạ đơn)', 'Hammer Curl', 'Tricep Pushdown (Kéo cáp tay sau)', 'Skull Crusher', 'Overhead Tricep Extension'],
-  'bung': ['Gập bụng (Crunches)', 'Plank (Giữ ván)', 'Leg Raise (Nằm nâng chân)', 'Russian Twist']
-};
-
 // Global State
 let currentUser = null;
 let workouts = [];
 let unsubscribe;
 let isSignUp = false;
 let currentEditId = null; // To track which workout is being edited
+let progressChart = null;
+let rmChart = null;
 
 // =================================================================================
 // Function Definitions
@@ -116,6 +106,237 @@ function renderHistory() {
     }).join('');
 }
 
+function updateStatistics() {
+    if (workouts.length === 0) return;
+
+    // Tổng số buổi tập
+    const totalWorkouts = workouts.length;
+    document.getElementById('total-workouts').textContent = totalWorkouts;
+
+    // Bài tập được tập nhiều nhất
+    const exerciseCount = {};
+    workouts.forEach(w => {
+        const exercise = w.exercise || 'Không tên';
+        exerciseCount[exercise] = (exerciseCount[exercise] || 0) + 1;
+    });
+    const mostExercised = Object.entries(exerciseCount)
+        .sort(([,a], [,b]) => b - a)[0];
+    document.getElementById('most-exercised').textContent = mostExercised ? mostExercised[0] : '-';
+
+    // Nhóm cơ tập nhiều nhất
+    const muscleGroupCount = {};
+    workouts.forEach(w => {
+        const muscleGroup = w.muscleGroup || 'Không xác định';
+        muscleGroupCount[muscleGroup] = (muscleGroupCount[muscleGroup] || 0) + 1;
+    });
+    const mostMuscleGroup = Object.entries(muscleGroupCount)
+        .sort(([,a], [,b]) => b - a)[0];
+    document.getElementById('most-muscle-group').textContent = mostMuscleGroup ? mostMuscleGroup[0] : '-';
+
+    // Tổng khối lượng
+    const totalVolume = workouts.reduce((acc, w) => {
+        const sets = w.sets || [];
+        return acc + sets.reduce((setAcc, s) => setAcc + ((s.weight || 0) * (s.reps || 0)), 0);
+    }, 0);
+    document.getElementById('total-volume').textContent = `${totalVolume.toLocaleString('vi-VN')} kg`;
+}
+
+function updateChartOptions() {
+    const chartExercise = document.getElementById('chart-exercise');
+    const rmExercise = document.getElementById('rm-exercise');
+    
+    if (!chartExercise || !rmExercise) return;
+
+    // Lấy danh sách bài tập duy nhất
+    const exercises = [...new Set(workouts.map(w => w.exercise).filter(Boolean))];
+    
+    // Cập nhật options cho chart
+    chartExercise.innerHTML = '<option value="">Chọn bài tập</option>';
+    exercises.forEach(exercise => {
+        const option = document.createElement('option');
+        option.value = exercise;
+        option.textContent = exercise;
+        chartExercise.appendChild(option);
+    });
+
+    // Cập nhật options cho 1RM
+    rmExercise.innerHTML = '<option value="">Chọn bài tập</option>';
+    exercises.forEach(exercise => {
+        const option = document.createElement('option');
+        option.value = exercise;
+        option.textContent = exercise;
+        rmExercise.appendChild(option);
+    });
+}
+
+function updateProgressChart() {
+    const exerciseSelect = document.getElementById('chart-exercise');
+    const metricSelect = document.getElementById('chart-metric');
+    const periodSelect = document.getElementById('chart-period');
+    
+    if (!exerciseSelect || !metricSelect || !periodSelect) return;
+
+    const selectedExercise = exerciseSelect.value;
+    const selectedMetric = metricSelect.value;
+    const selectedPeriod = periodSelect.value;
+
+    if (!selectedExercise) {
+        if (progressChart) {
+            progressChart.destroy();
+            progressChart = null;
+        }
+        return;
+    }
+
+    // Lọc dữ liệu theo bài tập và thời gian
+    let filteredWorkouts = workouts.filter(w => w.exercise === selectedExercise);
+    
+    if (selectedPeriod !== 'all') {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - parseInt(selectedPeriod));
+        filteredWorkouts = filteredWorkouts.filter(w => {
+            const workoutDate = new Date(w.date);
+            return workoutDate >= daysAgo;
+        });
+    }
+
+    // Sắp xếp theo ngày
+    filteredWorkouts.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const labels = filteredWorkouts.map(w => new Date(w.date).toLocaleDateString('vi-VN'));
+    const data = filteredWorkouts.map(w => {
+        const sets = w.sets || [];
+        switch (selectedMetric) {
+            case 'weight':
+                return Math.max(...sets.map(s => s.weight || 0));
+            case 'reps':
+                return Math.max(...sets.map(s => s.reps || 0));
+            case 'volume':
+                return sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+            default:
+                return 0;
+        }
+    });
+
+    const ctx = document.getElementById('progress-chart');
+    if (!ctx) return;
+
+    if (progressChart) {
+        progressChart.destroy();
+    }
+
+    progressChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: selectedMetric === 'weight' ? 'Mức tạ (kg)' : 
+                       selectedMetric === 'reps' ? 'Số lần lặp (reps)' : 'Tổng khối lượng (kg)',
+                data: data,
+                borderColor: '#4a90e2',
+                backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Tiến độ ${selectedExercise}`
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function calculate1RM(weight, reps) {
+    // Sử dụng công thức Brzycki để tính 1RM
+    return weight * (36 / (37 - reps));
+}
+
+function update1RMChart() {
+    const exerciseSelect = document.getElementById('rm-exercise');
+    if (!exerciseSelect) return;
+
+    const selectedExercise = exerciseSelect.value;
+    if (!selectedExercise) {
+        document.getElementById('rm-overview').innerHTML = 
+            '<p style="text-align: center; color: #666; font-style: italic;">Chọn một bài tập để xem ước tính 1RM</p>';
+        return;
+    }
+
+    const exerciseWorkouts = workouts.filter(w => w.exercise === selectedExercise);
+    if (exerciseWorkouts.length === 0) {
+        document.getElementById('rm-overview').innerHTML = 
+            '<p style="text-align: center; color: #666; font-style: italic;">Chưa có dữ liệu cho bài tập này</p>';
+        return;
+    }
+
+    // Tính 1RM cho mỗi buổi tập
+    const rmData = exerciseWorkouts.map(w => {
+        const sets = w.sets || [];
+        const maxRM = Math.max(...sets.map(s => calculate1RM(s.weight || 0, s.reps || 0)));
+        return {
+            date: w.date,
+            rm: maxRM
+        };
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const labels = rmData.map(d => new Date(d.date).toLocaleDateString('vi-VN'));
+    const data = rmData.map(d => d.rm);
+
+    const ctx = document.getElementById('rm-overview');
+    ctx.innerHTML = `
+        <div class="chart-container">
+            <canvas id="rm-chart"></canvas>
+        </div>
+        <div class="rm-stats">
+            <p><strong>1RM hiện tại:</strong> ${Math.max(...data).toFixed(1)} kg</p>
+            <p><strong>1RM trung bình:</strong> ${(data.reduce((a, b) => a + b, 0) / data.length).toFixed(1)} kg</p>
+        </div>
+    `;
+
+    const rmCtx = document.getElementById('rm-chart');
+    if (rmCtx) {
+        if (rmChart) {
+            rmChart.destroy();
+        }
+        rmChart = new Chart(rmCtx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '1RM (kg)',
+                    data: data,
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `1RM - ${selectedExercise}`
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+}
+
 function openAuthModal() {
     const authModal = document.getElementById('auth-modal');
     if (authModal) authModal.style.display = 'block';
@@ -155,6 +376,10 @@ function setupFirestoreListener(userId) {
     unsubscribe = workoutsCollection.onSnapshot(snapshot => {
         workouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderHistory();
+        updateStatistics();
+        updateChartOptions();
+        updateProgressChart();
+        update1RMChart();
     }, error => {
         console.error("Lỗi khi tải lịch sử tập: ", error);
         renderHistory();
@@ -180,36 +405,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const authPasswordInput = document.getElementById('auth-password');
     const authErrorEl = document.getElementById('auth-error');
     const authToggleLink = document.getElementById('auth-toggle-link');
-    const templateSelect = document.getElementById('template-select');
-    const exerciseSuggestionsEl = document.getElementById('exercise-suggestions');
     const addSetBtn = document.getElementById('add-set');
     const workoutForm = document.getElementById('workout-form');
     const historyBody = document.getElementById('history-body');
+    const chartExercise = document.getElementById('chart-exercise');
+    const chartMetric = document.getElementById('chart-metric');
+    const chartPeriod = document.getElementById('chart-period');
+    const rmExercise = document.getElementById('rm-exercise');
+    const exportDataBtn = document.getElementById('export-data');
+    const importDataBtn = document.getElementById('import-data');
+    const importFileInput = document.getElementById('import-file');
+    const deleteAllBtn = document.getElementById('delete-all');
 
     // Attach Auth Event Listeners
     loginGoogleBtn.addEventListener('click', () => {
         auth.signInWithPopup(googleProvider).catch(error => {
-            // Provide a more user-friendly error message
             console.error("Lỗi đăng nhập Google:", error);
             alert(`Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại. Lỗi: ${error.code}`);
         });
-    });
-
-    // Listener cho việc chọn buổi tập mẫu
-    templateSelect.addEventListener('change', (e) => {
-        const selectedTemplateKey = e.target.value;
-        
-        // Xóa các gợi ý cũ
-        exerciseSuggestionsEl.innerHTML = '';
-
-        if (selectedTemplateKey && workoutTemplates[selectedTemplateKey]) {
-            const exercises = workoutTemplates[selectedTemplateKey];
-            exercises.forEach(exercise => {
-                const option = document.createElement('option');
-                option.value = exercise;
-                exerciseSuggestionsEl.appendChild(option);
-            });
-        }
     });
 
     loginEmailBtn.addEventListener('click', openAuthModal);
@@ -258,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
             appContent.classList.add('hidden');
             userInfo.classList.add('hidden');
             renderHistory();
+            updateStatistics();
         }
     });
 
@@ -276,6 +490,102 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listener for adding a new set to the main form
     addSetBtn.addEventListener('click', () => addSet('sets-container'));
+
+    // Chart event listeners
+    if (chartExercise) {
+        chartExercise.addEventListener('change', updateProgressChart);
+    }
+    if (chartMetric) {
+        chartMetric.addEventListener('change', updateProgressChart);
+    }
+    if (chartPeriod) {
+        chartPeriod.addEventListener('change', updateProgressChart);
+    }
+    if (rmExercise) {
+        rmExercise.addEventListener('change', update1RMChart);
+    }
+
+    // Data export/import listeners
+    if (exportDataBtn) {
+        exportDataBtn.addEventListener('click', () => {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để xuất dữ liệu!');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(workouts, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `workout-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    if (importDataBtn) {
+        importDataBtn.addEventListener('click', () => {
+            importFileInput.click();
+        });
+    }
+
+    if (importFileInput) {
+        importFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để nhập dữ liệu!');
+                return;
+            }
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                if (!Array.isArray(data)) {
+                    alert('File không đúng định dạng!');
+                    return;
+                }
+
+                if (confirm(`Bạn có muốn nhập ${data.length} bài tập?`)) {
+                    for (const workout of data) {
+                        const { id, ...workoutData } = workout;
+                        await db.collection('users').doc(currentUser.uid).collection('workouts').add(workoutData);
+                    }
+                    alert('Đã nhập dữ liệu thành công!');
+                }
+            } catch (error) {
+                console.error('Lỗi khi nhập dữ liệu:', error);
+                alert('Đã xảy ra lỗi khi nhập dữ liệu!');
+            }
+        });
+    }
+
+    if (deleteAllBtn) {
+        deleteAllBtn.addEventListener('click', async () => {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+
+            if (confirm('Bạn có chắc chắn muốn xóa TẤT CẢ dữ liệu? Hành động này không thể hoàn tác!')) {
+                try {
+                    const batch = db.batch();
+                    workouts.forEach(workout => {
+                        const docRef = db.collection('users').doc(currentUser.uid).collection('workouts').doc(workout.id);
+                        batch.delete(docRef);
+                    });
+                    await batch.commit();
+                    alert('Đã xóa tất cả dữ liệu!');
+                } catch (error) {
+                    console.error('Lỗi khi xóa dữ liệu:', error);
+                    alert('Đã xảy ra lỗi khi xóa dữ liệu!');
+                }
+            }
+        });
+    }
 
     // Listener for saving a new workout
     workoutForm.addEventListener('submit', async (e) => {
@@ -298,7 +608,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const workoutData = {
-            // Use server timestamp for date if not provided, ensuring consistency
             date: document.getElementById('workout-date').value || new Date().toISOString().split('T')[0],
             muscleGroup: document.getElementById('muscle-group').value,
             exercise: document.getElementById('exercise-name').value,
