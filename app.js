@@ -45,7 +45,7 @@ let rmChart = null;
 /**
  * Adds a new set input group to the specified container.
  * @param {string} containerId The ID of the container element for sets.
- * @param {string} exerciseType The type of exercise (weight or bodyweight)
+ * @param {string} exerciseType The type of exercise (weight, bodyweight, or assisted)
  */
 function addSet(containerId, exerciseType = 'weight') {
     const container = document.getElementById(containerId);
@@ -54,14 +54,23 @@ function addSet(containerId, exerciseType = 'weight') {
     const setNumber = container.children.length + 1;
     const setEl = document.createElement('div');
     setEl.classList.add('set-item');
-    setEl.classList.add(exerciseType === 'bodyweight' ? 'bodyweight-exercise' : 'weight-exercise');
+    setEl.classList.add(exerciseType === 'bodyweight' ? 'bodyweight-exercise' : 
+                       exerciseType === 'assisted' ? 'assisted-exercise' : 'weight-exercise');
     
     if (exerciseType === 'bodyweight') {
-        // For bodyweight exercises, only show reps and time
+        // For bodyweight exercises, only show reps
         setEl.innerHTML = `
             <label>Set ${setNumber}:</label>
             <input type="number" class="set-reps" placeholder="Reps" required>
-            <input type="number" class="set-time" placeholder="Thời gian (giây)" min="0" step="1">
+            <div class="set-placeholder"></div>
+            <button type="button" class="remove-set-btn">Xóa</button>
+        `;
+    } else if (exerciseType === 'assisted') {
+        // For assisted exercises, show weight (assistance) and reps
+        setEl.innerHTML = `
+            <label>Set ${setNumber}:</label>
+            <input type="number" class="set-weight" placeholder="Hỗ trợ (kg)" required>
+            <input type="number" class="set-reps" placeholder="Reps" required>
             <button type="button" class="remove-set-btn">Xóa</button>
         `;
     } else {
@@ -114,15 +123,9 @@ function renderHistory() {
         
         let setsDetails = '';
         if (exerciseType === 'bodyweight') {
-            setsDetails = sets.map(s => {
-                const reps = s.reps || 0;
-                const time = s.time || 0;
-                if (time > 0) {
-                    return `<li>${reps} reps + ${time}s</li>`;
-                } else {
-                    return `<li>${reps} reps</li>`;
-                }
-            }).join('');
+            setsDetails = sets.map(s => `<li>${s.reps || 0} reps</li>`).join('');
+        } else if (exerciseType === 'assisted') {
+            setsDetails = sets.map(s => `<li>Hỗ trợ ${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
         } else {
             setsDetails = sets.map(s => `<li>${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
         }
@@ -130,6 +133,8 @@ function renderHistory() {
         let totalVolume = 0;
         if (exerciseType === 'bodyweight') {
             totalVolume = sets.reduce((acc, s) => acc + (s.reps || 0), 0);
+        } else if (exerciseType === 'assisted') {
+            totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
         } else {
             totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
         }
@@ -141,7 +146,9 @@ function renderHistory() {
                 <td>${w.exercise || 'Không tên'}</td>
                 <td>${w.equipment || ''}</td>
                 <td><ul class="sets-list">${setsDetails}</ul></td>
-                <td>${exerciseType === 'bodyweight' ? `${totalVolume} reps` : `${totalVolume.toLocaleString('vi-VN')} kg`}</td>
+                <td>${exerciseType === 'bodyweight' ? `${totalVolume} reps` : 
+                     exerciseType === 'assisted' ? `Hỗ trợ ${totalVolume.toLocaleString('vi-VN')} kg` :
+                     `${totalVolume.toLocaleString('vi-VN')} kg`}</td>
                 <td>${w.notes || ''}</td>
                 <td class="workout-actions">
                     <button class="edit-btn">Sửa</button>
@@ -712,10 +719,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (exerciseType === 'bodyweight') {
             setsData = Array.from(setsContainer.querySelectorAll('.set-item')).map(setEl => {
                 const reps = setEl.querySelector('.set-reps').value;
-                const time = setEl.querySelector('.set-time').value;
                 return { 
-                    reps: parseInt(reps) || 0, 
-                    time: parseInt(time) || 0 
+                    reps: parseInt(reps) || 0
+                };
+            });
+        } else if (exerciseType === 'assisted') {
+            setsData = Array.from(setsContainer.querySelectorAll('.set-item')).map(setEl => {
+                const weight = setEl.querySelector('.set-weight').value;
+                const reps = setEl.querySelector('.set-reps').value;
+                return { 
+                    weight: parseFloat(weight) || 0, 
+                    reps: parseInt(reps) || 0,
+                    assisted: true
                 };
             });
         } else {
