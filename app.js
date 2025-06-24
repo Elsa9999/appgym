@@ -550,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach Auth Event Listeners
     loginGoogleBtn.addEventListener('click', () => {
-        auth.signInWithPopup(googleProvider).catch(error => {
+        auth.signInWithRedirect(googleProvider).catch(error => {
             console.error("Lỗi đăng nhập Google:", error);
             alert(`Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại. Lỗi: ${error.code}`);
         });
