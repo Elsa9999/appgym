@@ -1227,12 +1227,12 @@ function showPRCelebration(newPRs) {
 let generatedPlan = null; // Store the generated plan temporarily
 
 async function handleAIGenerateWorkout() {
+    const aiPlanModal = document.getElementById('ai-plan-modal');
     const prompt = document.getElementById('ai-workout-prompt').value;
     if (!prompt) {
         alert('Vui lòng nhập mô tả cho buổi tập bạn muốn.');
         return;
     }
-
     const planContainer = document.getElementById('ai-plan-container');
     aiPlanModal.style.display = 'flex';
     planContainer.innerHTML = `
