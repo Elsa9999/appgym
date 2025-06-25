@@ -1,0 +1,12 @@
+{
+  "name": "appgym-graphql-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "apollo-server-micro": "^3.7.0",
+    "firebase-admin": "^11.0.0",
+    "graphql": "^16.0.0",
+    "graphql-type-json": "^0.3.2"
+  }
+} 

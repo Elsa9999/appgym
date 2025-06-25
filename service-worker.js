@@ -56,4 +56,17 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+});
+
+// Background Sync: Xử lý sync-workouts
+self.addEventListener('sync', function(event) {
+  if (event.tag === 'sync-workouts') {
+    event.waitUntil(
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'SYNC_WORKOUTS' });
+        });
+      })
+    );
+  }
 }); 
