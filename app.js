@@ -1250,21 +1250,28 @@ async function handleAIGenerateWorkout() {
             <p>AI đang tạo kế hoạch tập luyện... 🤖</p>
         </div>
     `;
-    // Gọi Gemini API lấy kế hoạch tập luyện
     const GEMINI_API_KEY = 'AIzaSyDPlpwrD-zGhdDu6Kpoi4wF0VAt0_RPTRY';
     if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
         planContainer.innerHTML = `<p style='color:red'>Chưa cấu hình API Key cho Gemini AI! Vui lòng điền API Key vào app.js.</p>`;
         return;
     }
+    // Thêm timeout 15s
+    let timeoutId;
+    const aiResultModal = document.getElementById('ai-result-modal');
+    const aiResultHtml = document.getElementById('ai-result-html');
     try {
-        const aiResult = await getGeminiWorkoutPlan(prompt);
-        // Hiển thị trong modal đẹp
-        const aiResultModal = document.getElementById('ai-result-modal');
-        const aiResultHtml = document.getElementById('ai-result-html');
+        const aiPromise = getGeminiWorkoutPlan(prompt);
+        const timeoutPromise = new Promise((_, reject) => {
+            timeoutId = setTimeout(() => reject(new Error('AI trả lời quá chậm hoặc có lỗi, vui lòng thử lại!')), 15000);
+        });
+        const aiResult = await Promise.race([aiPromise, timeoutPromise]);
+        clearTimeout(timeoutId);
         aiResultHtml.innerHTML = simpleMarkdownToHtml(aiResult);
         aiResultModal.style.display = 'flex';
     } catch (error) {
-        planContainer.innerHTML = `<p style='color:red'>Lỗi khi gọi AI: ${error.message}</p>`;
+        clearTimeout(timeoutId);
+        aiResultHtml.innerHTML = `<p style='color:red; text-align:center;'>${error.message || 'Lỗi không xác định khi gọi AI!'}</p>`;
+        aiResultModal.style.display = 'flex';
     }
 }
 
