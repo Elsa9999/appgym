@@ -548,7 +548,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeAiPlanModalBtn = document.getElementById('close-ai-plan-modal');
     const generateAiWorkoutBtn = document.getElementById('generate-ai-workout');
 
-    // Attach Auth Event Listeners
     loginGoogleBtn.addEventListener('click', () => {
         auth.signInWithRedirect(googleProvider).catch(error => {
             console.error("Lỗi đăng nhập Google:", error);
@@ -1227,7 +1226,7 @@ function showPRCelebration(newPRs) {
 
 let generatedPlan = null; // Store the generated plan temporarily
 
-function handleAIGenerateWorkout() {
+async function handleAIGenerateWorkout() {
     const prompt = document.getElementById('ai-workout-prompt').value;
     if (!prompt) {
         alert('Vui lòng nhập mô tả cho buổi tập bạn muốn.');
@@ -1243,11 +1242,18 @@ function handleAIGenerateWorkout() {
         </div>
     `;
 
-    // Simulate AI thinking
-    setTimeout(() => {
-        generatedPlan = generateWorkoutFromPrompt(prompt);
-        renderGeneratedPlan(generatedPlan);
-    }, 2000);
+    // Gọi Gemini API lấy kế hoạch tập luyện
+    const GEMINI_API_KEY = 'AIzaSyDPlpwrD-zGhdDu6Kpoi4wF0VAt0_RPTRY'; // <-- Đã thay bằng API Key thật
+    if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+        planContainer.innerHTML = `<p style='color:red'>Chưa cấu hình API Key cho Gemini AI! Vui lòng điền API Key vào app.js.</p>`;
+        return;
+    }
+    try {
+        const aiResult = await getGeminiWorkoutPlan(prompt);
+        planContainer.innerHTML = `<div class='ai-result'>${aiResult.replace(/\n/g, '<br>')}</div>`;
+    } catch (error) {
+        planContainer.innerHTML = `<p style='color:red'>Lỗi khi gọi AI: ${error.message}</p>`;
+    }
 }
 
 function parsePrompt(prompt) {
@@ -1429,4 +1435,40 @@ function startGeneratedWorkout(plan) {
     aiPlanModal.style.display = 'none';
 
     alert(`Đã điền thông tin cho bài tập ${firstExercise.exercise}. Hãy bắt đầu thôi!`);
+}
+
+// =================================================================================
+// Google Gemini AI Integration
+// =================================================================================
+
+/**
+ * Gọi Google Gemini API để tạo buổi tập dựa trên prompt người dùng
+ * Lưu ý: KHÔNG để lộ API Key trên client khi deploy thật!
+ * @param {string} prompt - Nội dung yêu cầu từ người dùng
+ * @returns {Promise<string>} - Kết quả trả về từ AI
+ */
+async function getGeminiWorkoutPlan(prompt) {
+    const GEMINI_API_KEY = 'AIzaSyDPlpwrD-zGhdDu6Kpoi4wF0VAt0_RPTRY'; // <-- Đã thay bằng API Key thật
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const body = {
+        contents: [
+            {
+                parts: [
+                    { text: prompt }
+                ]
+            }
+        ]
+    };
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có kết quả từ AI!';
+    } catch (error) {
+        console.error('Lỗi gọi Gemini API:', error);
+        return 'Lỗi gọi AI!';
+    }
 }
