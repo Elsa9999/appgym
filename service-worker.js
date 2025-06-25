@@ -1,5 +1,5 @@
 // Tên cache, hãy thay đổi phiên bản (v1, v2,...) khi bạn cập nhật các tệp trong ứng dụng
-const CACHE_NAME = 'appgym-cache-v1';
+const CACHE_NAME = 'gym-tracker-cache-v2';
 
 // Danh sách các tệp cần được cache để ứng dụng hoạt động offline
 const urlsToCache = [

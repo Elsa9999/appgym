@@ -31,6 +31,17 @@
                 <span id="user-display-name" style="font-weight: bold;"></span>
                 <button id="logout-btn" class="btn btn-secondary">Đăng xuất</button>
             </div>
+            
+            <!-- Theme Toggle -->
+            <div class="theme-toggle">
+                <button class="theme-btn" data-theme="light">☀️</button>
+                <button class="theme-btn" data-theme="dark">🌙</button>
+                <button class="theme-btn" data-theme="green">🟢</button>
+                <button class="theme-btn" data-theme="purple">🟣</button>
+                <button class="theme-btn" data-theme="orange">🟠</button>
+                <button class="theme-btn" data-theme="red">🔴</button>
+            </div>
+            
             <main>
                 <div class="main-grid">
                     <!-- Left Column -->
@@ -60,6 +71,17 @@
                                 <div class="form-group">
                                     <label for="exercise-name">Tên bài tập</label>
                                     <input type="text" id="exercise-name" placeholder="VD: Bench Press, Pull-up, Push-up..." required>
+                                </div>
+
+                                <!-- 3D Exercise Illustration -->
+                                <div class="exercise-illustration" id="exercise-illustration" style="display: none;">
+                                    <div class="exercise-3d-model" id="exercise-3d-model">
+                                        💪
+                                    </div>
+                                    <div class="exercise-info-overlay">
+                                        <h4 id="exercise-name-display">Chọn bài tập</h4>
+                                        <p id="exercise-description">Nhập tên bài tập để xem minh họa</p>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -336,6 +358,17 @@
                         <div class="form-group">
                             <label for="edit-exercise-name">Tên bài tập</label>
                             <input type="text" id="edit-exercise-name" placeholder="VD: Bench Press, Pull-up, Push-up..." required>
+                        </div>
+
+                        <!-- 3D Exercise Illustration for Edit -->
+                        <div class="exercise-illustration" id="edit-exercise-illustration" style="display: none;">
+                            <div class="exercise-3d-model" id="edit-exercise-3d-model">
+                                💪
+                            </div>
+                            <div class="exercise-info-overlay">
+                                <h4 id="edit-exercise-name-display">Chọn bài tập</h4>
+                                <p id="edit-exercise-description">Nhập tên bài tập để xem minh họa</p>
+                            </div>
                         </div>
 
                         <div class="form-group">

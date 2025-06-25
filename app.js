@@ -793,6 +793,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (generateAiWorkoutBtn) {
         generateAiWorkoutBtn.addEventListener('click', handleAIGenerateWorkout);
     }
+
+    // AI Result Modal
+    const aiResultModal = document.getElementById('ai-result-modal');
+    const aiModalCloseBtn = document.getElementById('ai-modal-close');
+    
+    if (aiModalCloseBtn) {
+        aiModalCloseBtn.addEventListener('click', () => {
+            aiResultModal.style.display = 'none';
+        });
+    }
+    
+    window.addEventListener('click', e => {
+        if (e.target == aiResultModal) {
+            aiResultModal.style.display = 'none';
+        }
+    });
+
+    // Initialize new features
+    initThemeSystem();
+    initExerciseIllustrations();
+    initDragAndDrop();
 });
 
 // =================================================================================
@@ -1505,4 +1526,307 @@ async function getGeminiWorkoutPlan(prompt) {
         console.error('Lỗi gọi Gemini API:', error);
         return 'Lỗi gọi AI!';
     }
+}
+
+// =================================================================================
+// Theme Management System
+// =================================================================================
+
+// Exercise database with 3D illustrations
+const exerciseDatabase = {
+    'Bench Press': {
+        icon: '🏋️',
+        description: 'Bài tập ngực cơ bản với tạ đòn',
+        muscleGroup: 'Ngực',
+        difficulty: 'Trung bình',
+        tips: 'Giữ lưng thẳng, hạ tạ chậm'
+    },
+    'Squat': {
+        icon: '🦵',
+        description: 'Bài tập chân toàn diện',
+        muscleGroup: 'Chân',
+        difficulty: 'Trung bình',
+        tips: 'Đầu gối không vượt quá mũi chân'
+    },
+    'Deadlift': {
+        icon: '🏋️‍♂️',
+        description: 'Bài tập lưng và chân mạnh mẽ',
+        muscleGroup: 'Lưng',
+        difficulty: 'Nâng cao',
+        tips: 'Giữ lưng thẳng, nâng từ hông'
+    },
+    'Pull-up': {
+        icon: '🧗',
+        description: 'Bài tập lưng với xà đơn',
+        muscleGroup: 'Lưng',
+        difficulty: 'Trung bình',
+        tips: 'Kéo xà về phía ngực, không đung đưa'
+    },
+    'Push-up': {
+        icon: '🤸',
+        description: 'Bài tập ngực không cần dụng cụ',
+        muscleGroup: 'Ngực',
+        difficulty: 'Cơ bản',
+        tips: 'Giữ cơ thể thẳng, hạ người chậm'
+    },
+    'Dumbbell Curl': {
+        icon: '💪',
+        description: 'Bài tập tay trước với tạ đơn',
+        muscleGroup: 'Tay',
+        difficulty: 'Cơ bản',
+        tips: 'Giữ khuỷu tay cố định'
+    },
+    'Overhead Press': {
+        icon: '🏋️‍♀️',
+        description: 'Bài tập vai với tạ đòn',
+        muscleGroup: 'Vai',
+        difficulty: 'Trung bình',
+        tips: 'Đẩy thẳng lên, không nghiêng lưng'
+    },
+    'Plank': {
+        icon: '🧘',
+        description: 'Bài tập bụng tĩnh',
+        muscleGroup: 'Bụng',
+        difficulty: 'Cơ bản',
+        tips: 'Giữ cơ thể thẳng, siết cơ bụng'
+    }
+};
+
+// Theme management
+function initThemeSystem() {
+    // Load saved theme or detect system preference
+    const savedTheme = localStorage.getItem('appgym-theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    let theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    setTheme(theme);
+    
+    // Add event listeners to theme buttons
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const theme = btn.dataset.theme;
+            setTheme(theme);
+        });
+    });
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('appgym-theme')) {
+            setTheme(e.matches ? 'dark' : 'light');
+        }
+    });
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('appgym-theme', theme);
+    
+    // Update active button
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+}
+
+// =================================================================================
+// 3D Exercise Illustrations
+// =================================================================================
+
+function initExerciseIllustrations() {
+    const exerciseInput = document.getElementById('exercise-name');
+    const editExerciseInput = document.getElementById('edit-exercise-name');
+    
+    if (exerciseInput) {
+        exerciseInput.addEventListener('input', (e) => {
+            updateExerciseIllustration(e.target.value, 'exercise');
+        });
+    }
+    
+    if (editExerciseInput) {
+        editExerciseInput.addEventListener('input', (e) => {
+            updateExerciseIllustration(e.target.value, 'edit-exercise');
+        });
+    }
+}
+
+function updateExerciseIllustration(exerciseName, prefix = 'exercise') {
+    const illustration = document.getElementById(`${prefix}-illustration`);
+    const model = document.getElementById(`${prefix}-3d-model`);
+    const nameDisplay = document.getElementById(`${prefix}-name-display`);
+    const description = document.getElementById(`${prefix}-description`);
+    
+    if (!illustration || !model || !nameDisplay || !description) return;
+    
+    const exercise = exerciseDatabase[exerciseName];
+    
+    if (exercise) {
+        illustration.style.display = 'block';
+        model.textContent = exercise.icon;
+        nameDisplay.textContent = exerciseName;
+        description.textContent = `${exercise.description} | ${exercise.muscleGroup} | ${exercise.difficulty}`;
+        
+        // Add animation
+        model.style.animation = 'none';
+        setTimeout(() => {
+            model.style.animation = 'float 3s ease-in-out infinite';
+        }, 10);
+    } else {
+        illustration.style.display = 'none';
+    }
+}
+
+// =================================================================================
+// Drag & Drop for Sets
+// =================================================================================
+
+function initDragAndDrop() {
+    // Initialize drag and drop for existing sets
+    setupDragAndDrop('sets-container');
+    setupDragAndDrop('edit-sets-container');
+}
+
+function setupDragAndDrop(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Add drag handle to existing sets
+    container.querySelectorAll('.set-item').forEach(set => {
+        addDragHandle(set);
+    });
+    
+    // Listen for new sets being added
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.classList && node.classList.contains('set-item')) {
+                    addDragHandle(node);
+                }
+            });
+        });
+    });
+    
+    observer.observe(container, { childList: true });
+}
+
+function addDragHandle(setElement) {
+    if (setElement.querySelector('.drag-handle')) return;
+    
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'drag-handle';
+    dragHandle.innerHTML = '⋮⋮';
+    dragHandle.draggable = true;
+    
+    setElement.appendChild(dragHandle);
+    
+    // Add drag event listeners
+    dragHandle.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', '');
+        setElement.classList.add('dragging');
+    });
+    
+    dragHandle.addEventListener('dragend', () => {
+        setElement.classList.remove('dragging');
+    });
+    
+    setElement.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        setElement.classList.add('drag-over');
+    });
+    
+    setElement.addEventListener('dragleave', () => {
+        setElement.classList.remove('drag-over');
+    });
+    
+    setElement.addEventListener('drop', (e) => {
+        e.preventDefault();
+        setElement.classList.remove('drag-over');
+        
+        const draggingElement = document.querySelector('.dragging');
+        if (draggingElement && draggingElement !== setElement) {
+            const container = setElement.parentNode;
+            const afterElement = getDragAfterElement(container, e.clientY);
+            
+            if (afterElement) {
+                container.insertBefore(draggingElement, afterElement);
+            } else {
+                container.appendChild(draggingElement);
+            }
+            
+            // Update set numbers
+            updateSetNumbers(container);
+        }
+    });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.set-item:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function updateSetNumbers(container) {
+    const sets = container.querySelectorAll('.set-item');
+    sets.forEach((set, index) => {
+        const label = set.querySelector('label');
+        if (label) {
+            label.textContent = `Set ${index + 1}:`;
+        }
+    });
+}
+
+// =================================================================================
+// Enhanced Set Management with Drag & Drop
+// =================================================================================
+
+function addSet(containerId, exerciseType = 'weight') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const setNumber = container.children.length + 1;
+    const setEl = document.createElement('div');
+    setEl.classList.add('set-item');
+    setEl.classList.add(exerciseType === 'bodyweight' ? 'bodyweight-exercise' : 
+                       exerciseType === 'assisted' ? 'assisted-exercise' : 'weight-exercise');
+    
+    if (exerciseType === 'bodyweight') {
+        setEl.innerHTML = `
+            <label>Set ${setNumber}:</label>
+            <input type="number" class="set-reps" placeholder="Reps" required>
+            <div class="set-placeholder"></div>
+            <button type="button" class="remove-set-btn">Xóa</button>
+        `;
+    } else if (exerciseType === 'assisted') {
+        setEl.innerHTML = `
+            <label>Set ${setNumber}:</label>
+            <input type="number" step="any" class="set-weight" placeholder="Hỗ trợ (kg)" required>
+            <input type="number" class="set-reps" placeholder="Reps" required>
+            <button type="button" class="remove-set-btn">Xóa</button>
+        `;
+    } else {
+        setEl.innerHTML = `
+            <label>Set ${setNumber}:</label>
+            <input type="number" step="any" class="set-weight" placeholder="Tạ (kg)" required>
+            <input type="number" class="set-reps" placeholder="Reps" required>
+            <button type="button" class="remove-set-btn">Xóa</button>
+        `;
+    }
+
+    // Add event listener to the new remove button
+    setEl.querySelector('.remove-set-btn').addEventListener('click', () => {
+        setEl.remove();
+        updateSetNumbers(container);
+    });
+
+    container.appendChild(setEl);
+    
+    // Add drag handle to new set
+    addDragHandle(setEl);
 }
