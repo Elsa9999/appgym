@@ -1226,6 +1226,15 @@ function showPRCelebration(newPRs) {
 
 let generatedPlan = null; // Store the generated plan temporarily
 
+// Hàm chuyển markdown đơn giản sang HTML (bold, list, heading)
+function simpleMarkdownToHtml(md) {
+  return md
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^\* (.+)$/gm, '<li>$1</li>')
+    .replace(/\n\n/g, '<br>')
+    .replace(/^#+ (.+)$/gm, '<h3>$1</h3>');
+}
+
 async function handleAIGenerateWorkout() {
     const aiPlanModal = document.getElementById('ai-plan-modal');
     const prompt = document.getElementById('ai-workout-prompt').value;
@@ -1241,16 +1250,19 @@ async function handleAIGenerateWorkout() {
             <p>AI đang tạo kế hoạch tập luyện... 🤖</p>
         </div>
     `;
-
     // Gọi Gemini API lấy kế hoạch tập luyện
-    const GEMINI_API_KEY = 'AIzaSyDPlpwrD-zGhdDu6Kpoi4wF0VAt0_RPTRY'; // <-- Đã thay bằng API Key thật
+    const GEMINI_API_KEY = 'AIzaSyDPlpwrD-zGhdDu6Kpoi4wF0VAt0_RPTRY';
     if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
         planContainer.innerHTML = `<p style='color:red'>Chưa cấu hình API Key cho Gemini AI! Vui lòng điền API Key vào app.js.</p>`;
         return;
     }
     try {
         const aiResult = await getGeminiWorkoutPlan(prompt);
-        planContainer.innerHTML = `<div class='ai-result'>${aiResult.replace(/\n/g, '<br>')}</div>`;
+        // Hiển thị trong modal đẹp
+        const aiResultModal = document.getElementById('ai-result-modal');
+        const aiResultHtml = document.getElementById('ai-result-html');
+        aiResultHtml.innerHTML = simpleMarkdownToHtml(aiResult);
+        aiResultModal.style.display = 'flex';
     } catch (error) {
         planContainer.innerHTML = `<p style='color:red'>Lỗi khi gọi AI: ${error.message}</p>`;
     }
