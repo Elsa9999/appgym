@@ -1235,6 +1235,19 @@ function simpleMarkdownToHtml(md) {
     .replace(/^#+ (.+)$/gm, '<h3>$1</h3>');
 }
 
+function buildPersonalizedPrompt(userPrompt, workouts) {
+    if (!workouts || workouts.length === 0) return userPrompt;
+    // Lấy 7 buổi gần nhất
+    const recent = workouts.slice(0, 7).map(w => {
+        const sets = (w.sets || []).map(s => {
+            if (s.weight) return `${s.weight}kg x ${s.reps} reps`;
+            return `${s.reps} reps`;
+        }).join(', ');
+        return `- ${w.date || ''}: ${w.muscleGroup || ''}, ${w.exercise || ''}${sets ? ' (' + sets + ')' : ''}`;
+    }).join('\n');
+    return `Lịch sử tập luyện gần đây của tôi:\n${recent}\n\nYêu cầu: ${userPrompt}\nDựa trên lịch sử, hãy đề xuất buổi tập tiếp theo tối ưu nhất cho tôi.`;
+}
+
 async function handleAIGenerateWorkout() {
     const aiPlanModal = document.getElementById('ai-plan-modal');
     const prompt = document.getElementById('ai-workout-prompt').value;
@@ -1260,7 +1273,9 @@ async function handleAIGenerateWorkout() {
     const aiResultModal = document.getElementById('ai-result-modal');
     const aiResultHtml = document.getElementById('ai-result-html');
     try {
-        const aiPromise = getGeminiWorkoutPlan(prompt);
+        // Tạo prompt cá nhân hóa
+        const personalizedPrompt = buildPersonalizedPrompt(prompt, workouts);
+        const aiPromise = getGeminiWorkoutPlan(personalizedPrompt);
         const timeoutPromise = new Promise((_, reject) => {
             timeoutId = setTimeout(() => reject(new Error('AI trả lời quá chậm hoặc có lỗi, vui lòng thử lại!')), 15000);
         });
