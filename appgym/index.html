@@ -1,0 +1,258 @@
+<head>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Meta tags cho social sharing -->
+  <meta property="og:title" content="AppGym - Theo dõi tập luyện thông minh">
+  <meta property="og:description" content="Ứng dụng theo dõi tập luyện với AI phân tích và đồng bộ đa thiết bị">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      authDomain: "appgym-tracker.firebaseapp.com",
+      projectId: "appgym-tracker",
+      storageBucket: "appgym-tracker.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef123456"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    window.auth = getAuth(app);
+    window.db = getFirestore(app);
+    
+    onAuthStateChanged(auth, (user) => {
+      window.currentUser = user;
+      updateAuthUI();
+    });
+    
+    function updateAuthUI() {
+      const authSection = document.getElementById('auth-section');
+      const userInfo = document.getElementById('user-info');
+      const loginForm = document.getElementById('login-form');
+      
+      if (currentUser) {
+        authSection.style.display = 'none';
+        userInfo.style.display = 'block';
+        userInfo.innerHTML = `
+          <div style="text-align:center;padding:16px;background:var(--card-bg);border-radius:8px;margin-bottom:16px;">
+            <b>Đã đăng nhập:</b> ${currentUser.email}<br>
+            <button onclick="signOut(auth)" style="margin-top:8px;padding:4px 12px;">Đăng xuất</button>
+          </div>
+        `;
+      } else {
+        authSection.style.display = 'block';
+        userInfo.style.display = 'none';
+      }
+    }
+    
+    window.loginUser = async (email, password) => {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        return { success: true };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    };
+    
+    window.registerUser = async (email, password) => {
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        return { success: true };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    };
+  </script>
+</head>
+
+<!-- Header với toggle dark mode -->
+<header style="position:sticky;top:0;z-index:100;background:var(--header-bg);padding:16px;box-shadow:0 2px 8px var(--shadow);">
+  <div style="display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;">
+    <h1 style="margin:0;color:var(--text-primary);">🏋️ AppGym</h1>
+    <button id="dark-mode-toggle" style="background:var(--accent);color:var(--text-on-accent);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:1.2rem;">🌙</button>
+  </div>
+</header>
+
+<div id="user-info" style="display:none;"></div>
+
+<section id="auth-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Đăng nhập / Đăng ký</h2>
+  <div style="max-width:400px;margin:0 auto;">
+    <form id="login-form" style="display:flex;flex-direction:column;gap:12px;">
+      <input id="auth-email" type="email" placeholder="Email" required style="padding:8px;border-radius:4px;border:1px solid #ccc;">
+      <input id="auth-password" type="password" placeholder="Mật khẩu" required style="padding:8px;border-radius:4px;border:1px solid #ccc;">
+      <button type="submit" style="padding:10px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;">Đăng nhập</button>
+      <button type="button" id="register-btn" style="padding:10px;background:#43a047;color:#fff;border:none;border-radius:4px;cursor:pointer;">Đăng ký</button>
+      <div id="auth-feedback" style="text-align:center;font-weight:bold;"></div>
+    </form>
+  </div>
+</section>
+
+<div id="exercise-3d-viewer" style="margin: 16px 0;"></div>
+
+<!-- Báo cáo nâng cao & Biểu đồ trực quan -->
+<section id="report-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Báo cáo tập luyện & Biểu đồ trực quan</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+    <div style="flex:1;min-width:320px;max-width:480px;">
+      <h3 style="text-align:center;">Khối lượng tập theo nhóm cơ</h3>
+      <canvas id="muscleVolumeChart" height="240"></canvas>
+    </div>
+    <div style="flex:1;min-width:320px;max-width:480px;">
+      <h3 style="text-align:center;">Số buổi tập theo thời gian</h3>
+      <canvas id="workoutCountChart" height="240"></canvas>
+    </div>
+  </div>
+</section>
+
+<section id="inbody-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Phân tích InBody bằng AI</h2>
+  <div style="max-width:600px;margin:0 auto;">
+    <label for="inbody-analysis-input">Dán kết quả phân tích InBody từ AI (ChatGPT...)</label>
+    <textarea id="inbody-analysis-input" rows="6" style="width:100%;margin:8px 0 16px 0;"></textarea>
+    <button id="save-inbody-btn" style="padding:8px 24px;">Lưu kết quả InBody</button>
+    <div id="inbody-feedback" style="margin:12px 0;color:green;"></div>
+    <div id="inbody-compare" style="margin-top:24px;"></div>
+  </div>
+</section>
+
+<section id="profile-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Thông tin cá nhân</h2>
+  <form id="profile-form" style="max-width:480px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;">
+    <input id="profile-height" type="number" step="0.1" placeholder="Chiều cao (cm)" style="flex:1;min-width:120px;">
+    <input id="profile-weight" type="number" step="0.1" placeholder="Cân nặng (kg)" style="flex:1;min-width:120px;">
+    <input id="profile-age" type="number" step="1" placeholder="Tuổi" style="flex:1;min-width:80px;">
+    <input id="profile-tdee" type="number" step="1" placeholder="TDEE (kcal)" style="flex:1;min-width:120px;">
+    <input id="profile-goal" type="text" placeholder="Mục tiêu (ví dụ: tăng cơ, giảm mỡ...)" style="flex:2;min-width:180px;">
+    <button type="submit" style="padding:8px 24px;">Lưu thông tin</button>
+    <span id="profile-feedback" style="margin-left:12px;color:green;"></span>
+  </form>
+</section>
+
+<section id="inbody-progress-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Biểu đồ tiến trình InBody</h2>
+  <div style="max-width:700px;margin:0 auto;">
+    <canvas id="inbodyProgressChart" height="280"></canvas>
+  </div>
+</section>
+
+<section id="export-history-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Lịch sử xuất dữ liệu cho AI</h2>
+  <div id="export-history-list" style="max-width:700px;margin:0 auto;"></div>
+</section>
+
+<section id="export-ai-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Xuất dữ liệu cho AI</h2>
+  <div style="text-align:center;">
+    <button id="export-ai-btn" style="padding:10px 32px;font-size:1.1rem;">Xuất dữ liệu cho AI</button>
+  </div>
+  <div id="export-ai-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:32px 24px;border-radius:16px;max-width:700px;width:90vw;max-height:90vh;overflow:auto;box-shadow:0 8px 32px #0005;position:relative;">
+      <button id="close-export-ai" style="position:absolute;top:12px;right:16px;font-size:1.5rem;background:none;border:none;cursor:pointer;">&times;</button>
+      <h3 style="text-align:center;">Copy toàn bộ dữ liệu dưới đây và dán vào ChatGPT hoặc AI mạnh để nhận lộ trình, động viên!</h3>
+      <label for="export-ai-prompt" style="font-weight:bold;">Prompt AI (có thể chỉnh sửa):</label>
+      <textarea id="export-ai-prompt" rows="2" style="width:100%;margin:8px 0 8px 0;font-size:1rem;padding:8px;border-radius:8px;background:#f0f4fa;">Bạn là huấn luyện viên AI, hãy phân tích dữ liệu dưới đây và đưa ra lộ trình tập luyện, dinh dưỡng, động viên phù hợp nhất cho tôi. Nếu thiếu thông tin nào, hãy hỏi lại hoặc đưa ra lời khuyên phù hợp.</textarea>
+      <textarea id="export-ai-textarea" rows="18" style="width:100%;margin:8px 0 8px 0;font-size:1rem;padding:12px;border-radius:8px;background:#f8f9fa;"></textarea>
+      <button id="copy-export-ai" style="padding:8px 24px;">Copy</button>
+      <span id="export-ai-copied" style="margin-left:16px;color:green;display:none;">Đã copy!</span>
+    </div>
+  </div>
+</section>
+
+<section id="social-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Chia sẻ thành tích</h2>
+  <div style="max-width:600px;margin:0 auto;text-align:center;">
+    <div id="achievement-card" style="background:var(--card-bg);border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:var(--card-shadow);">
+      <h3>🎉 Thành tích của bạn</h3>
+      <div id="achievement-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:16px;margin:16px 0;">
+        <div style="text-align:center;">
+          <div style="font-size:2rem;font-weight:bold;color:var(--accent);">0</div>
+          <div style="font-size:0.9rem;color:var(--text-secondary);">Buổi tập</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;font-weight:bold;color:var(--accent);">0</div>
+          <div style="font-size:0.9rem;color:var(--text-secondary);">Ngày streak</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;font-weight:bold;color:var(--accent);">0</div>
+          <div style="font-size:0.9rem;color:var(--text-secondary);">Kg giảm</div>
+        </div>
+      </div>
+      <button id="generate-share-card" style="background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:12px 24px;cursor:pointer;margin:8px;">Tạo card chia sẻ</button>
+    </div>
+    <div id="share-buttons" style="display:none;">
+      <h4>Chia sẻ lên:</h4>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="shareToFacebook()" style="background:#1877f2;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;">Facebook</button>
+        <button onclick="shareToTwitter()" style="background:#1da1f2;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;">Twitter</button>
+        <button onclick="shareToWhatsApp()" style="background:#25d366;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;">WhatsApp</button>
+        <button onclick="copyShareLink()" style="background:var(--accent);color:var(--text-on-accent);border:none;border-radius:8px;padding:8px 16px;cursor:pointer;">Copy Link</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="advanced-charts-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Biểu đồ phân tích nâng cao</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+    <div style="flex:1;min-width:320px;max-width:480px;">
+      <h3 style="text-align:center;">Cân bằng nhóm cơ (Radar)</h3>
+      <canvas id="muscleBalanceChart" height="280"></canvas>
+    </div>
+    <div style="flex:1;min-width:320px;max-width:480px;">
+      <h3 style="text-align:center;">Volume theo thời gian (Bubble)</h3>
+      <canvas id="volumeTimeChart" height="280"></canvas>
+    </div>
+  </div>
+  <div style="max-width:700px;margin:32px auto;">
+    <h3 style="text-align:center;">Phân tích xu hướng</h3>
+    <canvas id="trendAnalysisChart" height="300"></canvas>
+  </div>
+</section>
+
+<section id="export-data-section" style="margin:32px 0;">
+  <h2 style="text-align:center;">Xuất dữ liệu</h2>
+  <div style="max-width:600px;margin:0 auto;text-align:center;">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:24px;">
+      <button id="export-csv-btn" style="background:#4caf50;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;">
+        📊 Xuất CSV
+      </button>
+      <button id="export-json-btn" style="background:#ff9800;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;">
+        📄 Xuất JSON
+      </button>
+      <button id="export-pdf-btn" style="background:#f44336;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;">
+        📋 Xuất PDF
+      </button>
+    </div>
+    <div id="export-options" style="background:var(--card-bg);border-radius:12px;padding:20px;margin-top:16px;">
+      <h4>Tùy chọn xuất:</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0;">
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="export-workouts" checked> Buổi tập
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="export-inbody" checked> InBody
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="export-profile" checked> Thông tin cá nhân
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="export-charts" checked> Biểu đồ
+        </label>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="display:flex;align-items:center;gap:8px;justify-content:center;">
+          <input type="checkbox" id="export-all-time"> Xuất toàn bộ dữ liệu (không chỉ 30 ngày gần nhất)
+        </label>
+      </div>
+    </div>
+    <div id="export-feedback" style="margin-top:16px;font-weight:bold;"></div>
+  </div>
+</section> 

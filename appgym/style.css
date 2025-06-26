@@ -1,0 +1,515 @@
+/* CSS Variables cho theme */
+:root {
+  /* Light mode */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-primary: #222222;
+  --text-secondary: #666666;
+  --accent: #1976d2;
+  --text-on-accent: #ffffff;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 24px #0001;
+  --header-bg: #ffffff;
+  --shadow: #0001;
+  --border: #e0e0e0;
+}
+
+[data-theme="dark"] {
+  /* Dark mode */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --accent: #64b5f6;
+  --text-on-accent: #000000;
+  --card-bg: #1e1e1e;
+  --card-shadow: 0 4px 24px #0005;
+  --header-bg: #1e1e1e;
+  --shadow: #0005;
+  --border: #333333;
+}
+
+/* Apply theme to body */
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header styles */
+header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+#dark-mode-toggle {
+  transition: transform 0.2s;
+}
+
+#dark-mode-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Update existing sections to use CSS variables */
+#auth-section, #profile-section, #inbody-section, #export-ai-section, #report-section, #inbody-progress-section, #export-history-section, #social-section {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  padding: 32px 16px;
+  margin-bottom: 32px;
+}
+
+#auth-section h2, #profile-section h2, #inbody-section h2, #export-ai-section h2, #report-section h2, #inbody-progress-section h2, #export-history-section h2, #social-section h2 {
+  color: var(--text-primary);
+}
+
+/* Form inputs */
+input, textarea, select {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+/* Buttons */
+button {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Social features */
+#achievement-card {
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+}
+
+#achievement-stats div {
+  color: var(--text-primary);
+}
+
+#share-buttons button {
+  margin: 4px;
+}
+
+/* Modal styles */
+#export-ai-modal {
+  background: var(--bg-primary);
+}
+
+#export-ai-modal > div {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+/* Chart background */
+canvas {
+  background: var(--bg-secondary);
+}
+
+/* Existing styles with theme support */
+.history-modal {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: var(--card-shadow);
+}
+
+#user-info {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  header {
+    padding: 12px;
+  }
+  
+  #achievement-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  #share-buttons div {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.history-modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222; color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px #0008;
+  padding: 24px 32px;
+  z-index: 1000;
+  min-width: 320px;
+  animation: fadeIn 0.3s;
+}
+.history-modal ul { list-style: none; padding: 0; }
+.history-modal li { margin-bottom: 12px; }
+.history-modal button { margin-left: 12px; }
+.close-history { margin-top: 16px; }
+.undo-delete-btn, .view-history-btn {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  margin: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.undo-delete-btn:hover, .view-history-btn:hover {
+  background: #ffa726;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+/* Animation cho thêm/xóa/undo */
+.added-animate { animation: popIn 0.3s; }
+.removed-animate { animation: fadeOut 0.4s; }
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Style cho biểu đồ báo cáo */
+#report-section {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0001;
+  padding: 32px 16px;
+  margin-bottom: 32px;
+}
+#report-section h2, #report-section h3 {
+  color: #222;
+}
+#report-section canvas {
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+}
+
+/* Style cho phân tích InBody AI */
+#inbody-section {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0001;
+  padding: 32px 16px;
+  margin-bottom: 32px;
+}
+#inbody-section h2 {
+  color: #222;
+}
+#inbody-analysis-input {
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  background: #f8f9fa;
+}
+#save-inbody-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+#save-inbody-btn:hover {
+  background: #1565c0;
+}
+#inbody-feedback {
+  font-weight: bold;
+}
+#inbody-compare ul {
+  padding-left: 20px;
+}
+
+/* Style cho modal xuất dữ liệu AI */
+#export-ai-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #0008;
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+#export-ai-modal.show {
+  display: flex;
+}
+#export-ai-modal textarea {
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 12px;
+  background: #f8f9fa;
+  min-height: 320px;
+}
+#export-ai-modal button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+#export-ai-modal button:hover {
+  background: #1565c0;
+}
+#export-ai-copied {
+  font-weight: bold;
+}
+
+/* Style cho đăng nhập/đăng ký */
+#auth-section {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0001;
+  padding: 32px 16px;
+  margin-bottom: 32px;
+}
+#auth-section h2 {
+  color: #222;
+}
+#login-form input {
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  background: #f8f9fa;
+}
+#login-form button {
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#login-form button:hover {
+  opacity: 0.9;
+}
+#auth-feedback {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+#user-info {
+  background: #e8f5e8;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#user-info button {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* ===================== ADVANCED CHARTS & EXPORT ===================== */
+
+#advanced-charts-section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 32px 0;
+    box-shadow: var(--card-shadow);
+}
+
+#advanced-charts-section h2 {
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+#advanced-charts-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+#advanced-charts-section canvas {
+    border-radius: 12px;
+    background: var(--bg-primary);
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Export section */
+#export-data-section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 32px 0;
+    box-shadow: var(--card-shadow);
+}
+
+#export-data-section h2 {
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+#export-csv-btn, #export-json-btn, #export-pdf-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+#export-csv-btn:hover, #export-json-btn:hover, #export-pdf-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#export-csv-btn {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+}
+
+#export-json-btn {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+#export-pdf-btn {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+#export-options {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid var(--border-color);
+}
+
+#export-options h4 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+#export-options label {
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#export-options label:hover {
+    color: var(--accent);
+}
+
+#export-options input[type="checkbox"] {
+    accent-color: var(--accent);
+    transform: scale(1.2);
+}
+
+#export-feedback {
+    margin-top: 16px;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Responsive design for charts */
+@media (max-width: 768px) {
+    #advanced-charts-section {
+        padding: 20px;
+    }
+    
+    #advanced-charts-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    #advanced-charts-section h3 {
+        font-size: 1.1rem;
+    }
+    
+    #export-data-section {
+        padding: 20px;
+    }
+    
+    #export-data-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    #export-csv-btn, #export-json-btn, #export-pdf-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    #export-options {
+        padding: 16px;
+    }
+    
+    #export-options label {
+        font-size: 0.9rem;
+    }
+}
+
+/* Chart container improvements */
+.chart-container {
+    position: relative;
+    margin: 16px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chart-container canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Loading animation for export */
+.export-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===================== END ADVANCED CHARTS & EXPORT ===================== */ 
