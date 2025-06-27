@@ -34,7 +34,6 @@ let currentUser = null;
 let workouts = [];
 let unsubscribe;
 let isSignUp = false;
-let currentEditId = null; // To track which workout is being edited
 let progressChart = null;
 let rmChart = null;
 let aiEngine = null; // AI Recommendations Engine
@@ -165,7 +164,6 @@ function renderHistory() {
                      `${totalVolume.toLocaleString('vi-VN')} kg`}</td>
                 <td>${w.notes || ''}</td>
                 <td class="workout-actions">
-                    <button class="edit-btn">Sửa</button>
                     <button class="delete-btn">Xóa</button>
                 </td>
             </tr>
@@ -548,25 +546,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeAiPlanModalBtn = document.getElementById('close-ai-plan-modal');
     const generateAiWorkoutBtn = document.getElementById('generate-ai-workout');
 
-    loginGoogleBtn.addEventListener('click', () => {
-        auth.signInWithRedirect(googleProvider).catch(error => {
-            console.error("Lỗi đăng nhập Google:", error);
-            alert(`Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại. Lỗi: ${error.code}`);
+    if (loginGoogleBtn) {
+        loginGoogleBtn.addEventListener('click', () => {
+            auth.signInWithRedirect(googleProvider).catch(error => {
+                console.error("Lỗi đăng nhập Google:", error);
+                alert(`Đã xảy ra lỗi khi đăng nhập với Google. Vui lòng thử lại. Lỗi: ${error.code}`);
+            });
         });
-    });
-
-    loginEmailBtn.addEventListener('click', openAuthModal);
-    logoutBtn.addEventListener('click', () => auth.signOut());
-    closeAuthModalBtn.addEventListener('click', closeAuthModalFunc);
-    authToggleLink.addEventListener('click', e => {
+    }
+    if (loginEmailBtn) loginEmailBtn.addEventListener('click', openAuthModal);
+    if (logoutBtn) logoutBtn.addEventListener('click', () => auth.signOut());
+    if (closeAuthModalBtn) closeAuthModalBtn.addEventListener('click', closeAuthModalFunc);
+    if (authToggleLink) authToggleLink.addEventListener('click', e => {
         e.preventDefault();
         isSignUp = !isSignUp;
         updateAuthModalUI();
     });
-    window.addEventListener('click', e => {
+    if (authModal) window.addEventListener('click', e => {
         if (e.target == authModal) closeAuthModalFunc();
     });
-    authForm.addEventListener('submit', async e => {
+    if (authForm) authForm.addEventListener('submit', async e => {
         e.preventDefault();
         const email = authEmailInput.value;
         const password = authPasswordInput.value;
@@ -583,55 +582,10 @@ document.addEventListener('DOMContentLoaded', () => {
             authErrorEl.textContent = "Đã xảy ra lỗi. Vui lòng kiểm tra lại Email/Mật khẩu.";
         }
     });
-
-    // Firebase Auth State Listener
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUser = user;
-            authContainer.classList.add('hidden');
-            appContent.classList.remove('hidden');
-            userInfo.classList.remove('hidden');
-            userDisplayName.textContent = user.displayName || user.email;
-            setupFirestoreListener(user.uid);
-            fetchPersonalRecords();
-        } else {
-            currentUser = null;
-            if (unsubscribe) unsubscribe();
-            workouts = [];
-            authContainer.classList.remove('hidden');
-            appContent.classList.add('hidden');
-            userInfo.classList.add('hidden');
-            renderHistory();
-            updateStatistics();
-            if (typeof renderActivityCalendar === 'function') {
-                renderActivityCalendar(); // Clear calendar
-            }
-            if (typeof updateMuscleHeatmap === 'function') {
-                updateMuscleHeatmap(); // Clear heatmap
-            }
-        }
-    });
-
-    // Đăng ký Service Worker cho PWA
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('Service Worker đã được đăng ký thành công:', registration);
-                })
-                .catch(err => {
-                    console.error('Đăng ký Service Worker thất bại:', err);
-                });
-        });
-    }
-
-    // Listener for adding a new set to the main form
-    addSetBtn.addEventListener('click', () => {
+    if (addSetBtn) addSetBtn.addEventListener('click', () => {
         const exerciseType = document.getElementById('exercise-type').value || 'weight';
         addSet('sets-container', exerciseType);
     });
-
-    // Listener for exercise type change
     const exerciseTypeSelect = document.getElementById('exercise-type');
     if (exerciseTypeSelect) {
         exerciseTypeSelect.addEventListener('change', (e) => {
@@ -639,38 +593,16 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSetForm(exerciseType, 'sets-container');
         });
     }
-
-    // Listener for edit exercise type change
-    const editExerciseTypeSelect = document.getElementById('edit-exercise-type');
-    if (editExerciseTypeSelect) {
-        editExerciseTypeSelect.addEventListener('change', (e) => {
-            const exerciseType = e.target.value;
-            updateSetForm(exerciseType, 'edit-sets-container');
-        });
-    }
-
-    // Chart event listeners
-    if (chartExercise) {
-        chartExercise.addEventListener('change', updateProgressChart);
-    }
-    if (chartMetric) {
-        chartMetric.addEventListener('change', updateProgressChart);
-    }
-    if (chartPeriod) {
-        chartPeriod.addEventListener('change', updateProgressChart);
-    }
-    if (rmExercise) {
-        rmExercise.addEventListener('change', update1RMChart);
-    }
-
-    // Data export/import listeners
+    if (chartExercise) chartExercise.addEventListener('change', updateProgressChart);
+    if (chartMetric) chartMetric.addEventListener('change', updateProgressChart);
+    if (chartPeriod) chartPeriod.addEventListener('change', updateProgressChart);
+    if (rmExercise) rmExercise.addEventListener('change', update1RMChart);
     if (exportDataBtn) {
         exportDataBtn.addEventListener('click', () => {
             if (!currentUser) {
                 alert('Vui lòng đăng nhập để xuất dữ liệu!');
                 return;
             }
-            
             const dataStr = JSON.stringify(workouts, null, 2);
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(dataBlob);
@@ -746,35 +678,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event delegation for edit and delete buttons in the history table
-    historyBody.addEventListener('click', async (e) => {
-        const target = e.target;
-        // Find the closest TR element to get the workout ID
-        const workoutRow = target.closest('tr');
-        if (!workoutRow) return;
+    if (historyBody) {
+        historyBody.addEventListener('click', async (e) => {
+            const target = e.target;
+            // Find the closest TR element to get the workout ID
+            const workoutRow = target.closest('tr');
+            if (!workoutRow) return;
 
-        const workoutId = workoutRow.dataset.id;
-        if (!workoutId || !currentUser) return;
+            const workoutId = workoutRow.dataset.id;
+            if (!workoutId || !currentUser) return;
 
-        // Handle Delete
-        if (target.classList.contains('delete-btn')) {
-            if (confirm("Bạn có chắc chắn muốn xóa bài tập này?")) {
-                try {
-                    await db.collection('users').doc(currentUser.uid).collection('workouts').doc(workoutId).delete();
-                    // No need to alert, the UI will update automatically via onSnapshot
-                } catch (error) {
-                    console.error("Lỗi khi xóa bài tập: ", error);
-                    alert("Đã có lỗi xảy ra khi xóa.");
+            // Handle Delete
+            if (target.classList.contains('delete-btn')) {
+                if (confirm("Bạn có chắc chắn muốn xóa bài tập này?")) {
+                    try {
+                        await db.collection('users').doc(currentUser.uid).collection('workouts').doc(workoutId).delete();
+                        // No need to alert, the UI will update automatically via onSnapshot
+                    } catch (error) {
+                        console.error("Lỗi khi xóa bài tập: ", error);
+                        alert("Đã có lỗi xảy ra khi xóa.");
+                    }
                 }
             }
-        }
-
-        // Handle Edit
-        if (target.classList.contains('edit-btn')) {
-            alert(`Chức năng sửa cho ID: ${workoutId} sẽ được thêm vào sớm!`);
-            // In the future, this will call a function like:
-            // openEditModal(workoutId);
-        }
-    });
+        });
+    }
 
     if (closePrModalBtn) {
         closePrModalBtn.addEventListener('click', () => prModal.style.display = 'none');
@@ -814,6 +741,88 @@ document.addEventListener('DOMContentLoaded', () => {
     initThemeSystem();
     initExerciseIllustrations();
     initDragAndDrop();
+
+    // Workout form submit handler
+    if (workoutForm) {
+        workoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để lưu bài tập!');
+                return;
+            }
+
+            const formData = new FormData(workoutForm);
+            const workoutData = {
+                date: formData.get('workout-date') || document.getElementById('workout-date').value,
+                muscleGroup: formData.get('muscle-group') || document.getElementById('muscle-group').value,
+                exercise: formData.get('exercise-name') || document.getElementById('exercise-name').value,
+                exerciseType: formData.get('exercise-type') || document.getElementById('exercise-type').value,
+                equipment: formData.get('equipment') || document.getElementById('equipment').value,
+                notes: formData.get('notes') || document.getElementById('notes').value,
+                sets: []
+            };
+
+            // Validate required fields
+            if (!workoutData.date || !workoutData.muscleGroup || !workoutData.exercise || !workoutData.exerciseType) {
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                return;
+            }
+
+            // Collect sets data
+            const setsContainer = document.getElementById('sets-container');
+            const setItems = setsContainer.querySelectorAll('.set-item');
+            
+            if (setItems.length === 0) {
+                alert('Vui lòng thêm ít nhất một set!');
+                return;
+            }
+
+            setItems.forEach(setItem => {
+                const weightInput = setItem.querySelector('.set-weight');
+                const repsInput = setItem.querySelector('.set-reps');
+                
+                if (workoutData.exerciseType === 'bodyweight') {
+                    const reps = parseInt(repsInput?.value) || 0;
+                    if (reps > 0) {
+                        workoutData.sets.push({ reps });
+                    }
+                } else {
+                    const weight = parseFloat(weightInput?.value) || 0;
+                    const reps = parseInt(repsInput?.value) || 0;
+                    if (weight > 0 && reps > 0) {
+                        workoutData.sets.push({ weight, reps });
+                    }
+                }
+            });
+
+            if (workoutData.sets.length === 0) {
+                alert('Vui lòng nhập dữ liệu cho ít nhất một set!');
+                return;
+            }
+
+            try {
+                // Add to Firestore
+                await db.collection('users').doc(currentUser.uid).collection('workouts').add(workoutData);
+                
+                // Reset form
+                workoutForm.reset();
+                setsContainer.innerHTML = '';
+                addSet('sets-container', 'weight'); // Add one default set
+                
+                alert('Đã lưu bài tập thành công!');
+                
+                // Check for new PRs
+                await checkAndSetNewPR(workoutData);
+                
+                // Cập nhật lại lịch sử ngay lập tức
+                renderHistory();
+            } catch (error) {
+                console.error('Lỗi khi lưu bài tập:', error);
+                alert('Đã xảy ra lỗi khi lưu bài tập. Vui lòng thử lại!');
+            }
+        });
+    }
 });
 
 // =================================================================================
@@ -1633,17 +1642,10 @@ function setTheme(theme) {
 
 function initExerciseIllustrations() {
     const exerciseInput = document.getElementById('exercise-name');
-    const editExerciseInput = document.getElementById('edit-exercise-name');
     
     if (exerciseInput) {
         exerciseInput.addEventListener('input', (e) => {
             updateExerciseIllustration(e.target.value, 'exercise');
-        });
-    }
-    
-    if (editExerciseInput) {
-        editExerciseInput.addEventListener('input', (e) => {
-            updateExerciseIllustration(e.target.value, 'edit-exercise');
         });
     }
 }
@@ -1681,7 +1683,6 @@ function updateExerciseIllustration(exerciseName, prefix = 'exercise') {
 function initDragAndDrop() {
     // Initialize drag and drop for existing sets
     setupDragAndDrop('sets-container');
-    setupDragAndDrop('edit-sets-container');
 }
 
 function setupDragAndDrop(containerId) {
