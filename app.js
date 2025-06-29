@@ -16,6 +16,22 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+// Xử lý kết quả redirect Google
+auth.getRedirectResult().then((result) => {
+    if (result.user) {
+        currentUser = result.user;
+        // Có thể gọi lại các hàm cập nhật UI hoặc fetch dữ liệu ở đây nếu cần
+        const authContainer = document.getElementById('auth-container');
+        const appContent = document.getElementById('app-content');
+        if (authContainer) authContainer.style.display = 'none';
+        if (appContent) appContent.style.display = 'block';
+        setupFirestoreListener(result.user.uid);
+        fetchPersonalRecords();
+    }
+}).catch((error) => {
+    console.error("Lỗi khi xử lý kết quả redirect Google:", error);
+});
+
 // Kích hoạt chế độ offline của Firestore
 db.enablePersistence()
   .catch((err) => {
@@ -1831,3 +1847,26 @@ function addSet(containerId, exerciseType = 'weight') {
     // Add drag handle to new set
     addDragHandle(setEl);
 }
+
+// Sau khi DOMContentLoaded, thêm listener kiểm tra trạng thái đăng nhập
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        currentUser = user;
+        console.log('[DEBUG] Đăng nhập thành công:', user.email || user.displayName || user.uid);
+        // Ẩn auth-container, hiển thị app-content nếu có
+        const authContainer = document.getElementById('auth-container');
+        const appContent = document.getElementById('app-content');
+        if (authContainer) authContainer.style.display = 'none';
+        if (appContent) appContent.style.display = 'block';
+        setupFirestoreListener(user.uid);
+        fetchPersonalRecords();
+    } else {
+        currentUser = null;
+        console.warn('[DEBUG] Chưa đăng nhập hoặc đã đăng xuất.');
+        // Hiển thị auth-container, ẩn app-content nếu có
+        const authContainer = document.getElementById('auth-container');
+        const appContent = document.getElementById('app-content');
+        if (authContainer) authContainer.style.display = 'block';
+        if (appContent) appContent.style.display = 'none';
+    }
+});
