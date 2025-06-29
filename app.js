@@ -140,32 +140,33 @@ function renderHistory() {
     const historyBody = document.getElementById('history-body');
     if (!historyBody) return;
 
-    if (workouts.length === 0) {
+    if (!Array.isArray(workouts) || workouts.length === 0) {
         historyBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Chưa có lịch sử tập luyện.</td></tr>';
         return;
     }
 
     historyBody.innerHTML = workouts.map(w => {
+        if (!w) return '';
         // Default to an empty array if sets are missing
-        const sets = w.sets || [];
+        const sets = Array.isArray(w.sets) ? w.sets : [];
         const exerciseType = w.exerciseType || 'weight';
         
         let setsDetails = '';
         if (exerciseType === 'bodyweight') {
-            setsDetails = sets.map(s => `<li>${s.reps || 0} reps</li>`).join('');
+            setsDetails = sets.map(s => `<li>${s?.reps || 0} reps</li>`).join('');
         } else if (exerciseType === 'assisted') {
-            setsDetails = sets.map(s => `<li>Hỗ trợ ${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
+            setsDetails = sets.map(s => `<li>Hỗ trợ ${s?.weight || 0}kg x ${s?.reps || 0} reps</li>`).join('');
         } else {
-            setsDetails = sets.map(s => `<li>${s.weight || 0}kg x ${s.reps || 0} reps</li>`).join('');
+            setsDetails = sets.map(s => `<li>${s?.weight || 0}kg x ${s?.reps || 0} reps</li>`).join('');
         }
         
         let totalVolume = 0;
         if (exerciseType === 'bodyweight') {
-            totalVolume = sets.reduce((acc, s) => acc + (s.reps || 0), 0);
+            totalVolume = sets.reduce((acc, s) => acc + (s?.reps || 0), 0);
         } else if (exerciseType === 'assisted') {
-            totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+            totalVolume = sets.reduce((acc, s) => acc + ((s?.weight || 0) * (s?.reps || 0)), 0);
         } else {
-            totalVolume = sets.reduce((acc, s) => acc + ((s.weight || 0) * (s.reps || 0)), 0);
+            totalVolume = sets.reduce((acc, s) => acc + ((s?.weight || 0) * (s?.reps || 0)), 0);
         }
 
         return `
