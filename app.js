@@ -1162,6 +1162,7 @@ function renderPersonalRecords() {
     }
 
     container.innerHTML = prs.map(([exercise, data]) => {
+        if (!data || !data.records) return '';
         const recordsHtml = Object.entries(data.records)
             .sort(([keyA], [keyB]) => {
                 // Sort 1RM to be on top
@@ -1171,9 +1172,9 @@ function renderPersonalRecords() {
             })
             .map(([type, record]) => {
                 if (type === '1rm') {
-                    return `<li><span class="pr-type">1RM Ước tính</span> <span class="pr-value">${record.value.toFixed(2)} kg</span></li>`;
+                    return `<li><span class="pr-type">1RM Ước tính</span> <span class="pr-value">${record.value?.toFixed(2) ?? 0} kg</span></li>`;
                 }
-                return `<li><span class="pr-type">${type} reps</span> <span class="pr-value">${record.weight} kg</span></li>`;
+                return `<li><span class="pr-type">${type} reps</span> <span class="pr-value">${record.weight ?? 0} kg</span></li>`;
             }).join('');
 
         return `
